@@ -91,7 +91,7 @@ public class BuyItemRequestHandler {
 					itemDBID = result.getInt("max");
 				}
 			} catch (SQLException e) {
-				System.out.println("There was an error retrievig correct item number for item");
+				System.out.println("There was an error retrieving correct item number for item");
 			}
 			client.addItemToInventory(itemDBID,
 					new StickItem(ItemID, itemDBID, client.getDbID(), iType, false, newColour));
