@@ -4,15 +4,17 @@
  */
 
 package ballistickemu.Lobby.handlers;
-import ballistickemu.Types.StickClient;
-import ballistickemu.Types.StickItem;
-import ballistickemu.Types.StickColour;
-import ballistickemu.Tools.StickPacketMaker;
-import ballistickemu.Tools.DatabaseTools;
-import ballistickemu.Tools.StringTool;
-import ballistickemu.Main;
-import java.sql.SQLException;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
+import ballistickemu.Main;
+import ballistickemu.Tools.DatabaseTools;
+import ballistickemu.Tools.StickPacketMaker;
+import ballistickemu.Tools.StringTool;
+import ballistickemu.Types.StickClient;
+import ballistickemu.Types.StickColour;
+import ballistickemu.Types.StickItem;
 /**
  *
  * @author Simon
@@ -182,6 +184,14 @@ public class PlayerCommandHandler {
                 int newDBID = ps.executeUpdate();
                 if (newDBID > 0)
                 {
+    				PreparedStatement ps3 = DatabaseTools.getDbConnection().prepareStatement(
+    						"SELECT MAX(id) AS `max` FROM `inventory` WHERE `userid` = ? AND `itemtype` = ?");
+    				ps3.setInt(1, client.getDbID());
+    				ps3.setInt(2, 1);
+    				ResultSet result = ps3.executeQuery();
+    				if (result.next()) {
+    					newDBID = result.getInt("max");
+    				}
                     client.writeCallbackMessage("Item successfully added. Check your profile tab!");
                     StickColour newcol = new StickColour();
                     newcol.setColour1FromString(red + green + blue);
