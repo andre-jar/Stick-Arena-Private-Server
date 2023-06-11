@@ -11,7 +11,7 @@ import ballistickemu.Tools.StickNetworkHandler;
 import ballistickemu.Lobby.LobbyServer;
 import ballistickemu.Tools.DatabaseTools;
 import ballistickemu.Tools.QuickplayTool;
- 
+
 import org.apache.mina.core.session.IdleStatus;
 import org.apache.mina.filter.codec.ProtocolCodecFilter;
 import org.apache.mina.filter.codec.textline.TextLineCodecFactory;
@@ -32,7 +32,7 @@ public class Main {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        System.out.println("Welcome to BallistickEMU - Improved by Michal");
+        System.out.println("Welcome to BallistickEMU - Improved by andre_jar");
         NioSocketAcceptor SocketAcceptor = new NioSocketAcceptor();
         SocketAcceptor.getSessionConfig().setIdleTime( IdleStatus.BOTH_IDLE, 10 );
         SocketAcceptor.getSessionConfig().setReadBufferSize( 2048 );
