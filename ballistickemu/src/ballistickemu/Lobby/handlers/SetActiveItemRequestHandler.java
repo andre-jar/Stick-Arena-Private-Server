@@ -37,7 +37,15 @@ public class SetActiveItemRequestHandler {
                 ps.setInt(1, toChange.getItemDBID());
                 ps.setInt(2, toChange.getUserDBID());
                 ps.executeUpdate();
-
+				if (toChange.getitemType() == 1) {
+					ps = DatabaseTools.getDbConnection()
+							.prepareStatement("UPDATE `users` SET `red` = ?, `green` = ?, `blue` = ? WHERE `UID` = ?");
+					ps.setInt(1, toChange.getColour().getRed1());
+					ps.setInt(2, toChange.getColour().getGreen1());
+					ps.setInt(3, toChange.getColour().getBlue1());
+					ps.setInt(4, toChange.getUserDBID());
+					ps.executeUpdate();
+				}
             }
             else
             {
