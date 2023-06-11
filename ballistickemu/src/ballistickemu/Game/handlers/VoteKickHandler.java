@@ -18,28 +18,30 @@
  *     the Free Software Foundation, Inc., 59 Temple Place,
  */
 package ballistickemu.Game.handlers;
+
 import ballistickemu.Types.StickClient;
-import ballistickemu.Lobby.handlers.ModCommandHandler;
+import ballistickemu.Tools.StickPacketMaker;
+
 /**
  *
  * @author Simon
  */
 public class VoteKickHandler {
-    public static void HandlePacket(StickClient client, String Packet)
-    {
-        if(client.getModStatus() && Packet.length() > 3)
-        {
-            String v_UID = Packet.substring(1, 4);
-            StickClient victim = client.getRoom().GetCR().getClientfromUID(v_UID);
-            if(victim != null)
-            {
-                ModCommandHandler.banPlayer(victim.getName(), client);
-                victim.getIoSession().close(false);
-            }
-            else
-            {
-                GamePacketBroadcastHandler.HandlePacket(client, Packet);
-            }
-        }
-    }
+	public static void HandlePacket(StickClient client, String Packet) {
+		if (Packet.length() > 3) {
+			String v_UID = Packet.substring(1, 4);
+			StickClient victim = client.getRoom().GetCR().getClientfromUID(v_UID);
+			if (victim != null) {
+				if (client.getModStatus()) {
+					client.getRoom().moderatorKick(victim);
+				} else {
+					client.getRoom()
+							.BroadcastToRoom(StickPacketMaker.getKickVotePacket(client.getUID(), victim.getUID()));
+					client.getRoom().addVoteKick(victim, client);
+				}
+			} else {
+				GamePacketBroadcastHandler.HandlePacket(client, Packet);
+			}
+		}
+	}
 }
