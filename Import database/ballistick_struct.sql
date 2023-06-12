@@ -172,3 +172,22 @@ UNLOCK TABLES;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
 -- Dump completed on 2011-08-06 10:24:07
+
+DROP TABLE IF EXISTS `bans`;
+CREATE TABLE `bans` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `userid` int(10) unsigned NOT NULL,
+  `playername` text NOT NULL,
+  `mod_responsible` text NOT NULL,
+  `issuedate` BIGINT(20) NOT NULL,
+  `enddate` BIGINT(20) NOT NULL,
+  `reason` text,
+   PRIMARY KEY (`id`)
+) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `maps`
+--
+
+LOCK TABLES `bans` WRITE;
