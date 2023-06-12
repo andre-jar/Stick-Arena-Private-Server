@@ -27,12 +27,12 @@ CREATE TABLE `inventory` (
   `userid` int(10) unsigned NOT NULL,
   `itemid` int(10) unsigned NOT NULL,
   `itemtype` int(10) unsigned NOT NULL,
-  `red1` int(10) unsigned NOT NULL,
-  `green1` int(10) unsigned NOT NULL,
-  `blue1` int(10) unsigned NOT NULL,
-  `red2` int(10) unsigned NOT NULL,
-  `blue2` int(10) unsigned NOT NULL,
-  `green2` int(10) unsigned NOT NULL,
+  `red1` int(10) NOT NULL,
+  `green1` int(10) NOT NULL,
+  `blue1` int(10) NOT NULL,
+  `red2` int(10) NOT NULL,
+  `blue2` int(10) NOT NULL,
+  `green2` int(10) NOT NULL,
   `selected` tinyint(1) unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
