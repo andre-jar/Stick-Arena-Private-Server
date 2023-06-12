@@ -59,7 +59,8 @@ CREATE TABLE `ipbans` (
   `ip` text NOT NULL,
   `playername` text NOT NULL,
   `mod_responsible` text NOT NULL,
-  `date_updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `issuedate` BIGINT(20) NOT NULL,
+  `enddate` BIGINT(20) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM AUTO_INCREMENT=22 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
