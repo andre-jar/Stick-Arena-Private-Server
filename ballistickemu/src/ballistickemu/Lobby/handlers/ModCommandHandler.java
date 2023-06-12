@@ -54,7 +54,19 @@ public class ModCommandHandler {
 				client.writeMessage("Usage: ::ban username minutes reason");
 			}
 		}
-
+		else if (ModCommandParsed[0].equalsIgnoreCase("::unban")) {
+			PreparedStatement ps;
+			DatabaseTools.lock.lock();
+			try {
+				ps = DatabaseTools.getDbConnection().prepareStatement("UPDATE `users` SET ban=0 WHERE `username` = ?");
+				ps.setString(1, ModCommandParsed[1]);
+				ps.executeUpdate();
+			} catch (SQLException e) {
+				System.out.println("Exception whilst removing ban: " + e.toString());
+			} finally {
+				DatabaseTools.lock.unlock();
+			}
+		}
 		else if (ModCommandParsed[0].equalsIgnoreCase("::mute")) {
 			if (ModCommandParsed.length == 2) {
 				StickClient SC = Main.getLobbyServer().getClientRegistry().getClientfromName(ModCommandParsed[1]);
