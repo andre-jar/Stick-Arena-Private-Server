@@ -71,7 +71,7 @@ public class StickRoom {
 		this.requiresPass = needsPass;
 		this.VIPLock = new ReentrantReadWriteLock();
 		this.CreatorName = _CreatorName;
-		Main.getLobbyServer().getRoomRegistry().scheduleRoomTimer(new OnTimedEvent());
+		Main.getLobbyServer().getRoomRegistry().scheduleRoomTimer(_Name, new OnTimedEvent());
 		blacklist = new ArrayList<>();
 		kickVoters = new HashSet<>();
 	}
@@ -193,7 +193,7 @@ public class StickRoom {
 	public LinkedHashMap<String, StickClient> getVIPs() {
 		return this.VIPs;
 	}
-	
+
 	public List<Integer> getBlackList() {
 		return blacklist;
 	}
@@ -237,15 +237,7 @@ public class StickRoom {
 			if (CR.getAllClients().isEmpty()) {
 				Main.getLobbyServer().getRoomRegistry()
 						.deRegisterRoom(Main.getLobbyServer().getRoomRegistry().GetRoomFromName(Name));
-
-				try {
-					StickRoom tempRoom = Main.getLobbyServer().getRoomRegistry().GetRoomFromName(Name);
-					if (tempRoom != null)
-						Main.getLobbyServer().getRoomRegistry().GetRoomFromName(Name).finalize();
-					this.finalize();
-				} catch (Throwable t) {
-					System.out.println("There was an error deleting room " + Name);
-				}
+				Thread.currentThread().interrupt();
 				return;
 			}
 
@@ -370,10 +362,5 @@ public class StickRoom {
 				CR.ClientsLock.readLock().unlock();
 			}
 		}
-	}
-
-	@Override
-	public void finalize() throws Throwable {
-		super.finalize();
 	}
 }
