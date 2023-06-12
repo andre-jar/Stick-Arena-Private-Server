@@ -111,7 +111,21 @@ public class PlayerCommandHandler {
 			ps.setString(7, client.getName());
 			ps.setInt(8, itemDBID);
 			if (ps.executeUpdate() == 1) {
-				client.writeCallbackMessage("Color successfully changed. Please log out to see the changes.");
+				client.writeCallbackMessage("Color successfully changed.");
+				StickColour newColour = new StickColour(Integer.valueOf(red), Integer.valueOf(green),
+						Integer.valueOf(blue), Integer.valueOf(red2), Integer.valueOf(green2), Integer.valueOf(blue2));
+				ToUpdate.setColour(newColour);
+				if (!Pet) {
+					client.setColour(newColour);
+					PreparedStatement ps2 = DatabaseTools.getDbConnection()
+							.prepareStatement("UPDATE `users` SET `red` = ?, `green` = ?, `blue` = ? WHERE `UID` = ?");
+					ps2.setInt(1, Integer.valueOf(red));
+					ps2.setInt(2, Integer.valueOf(green));
+					ps2.setInt(3, Integer.valueOf(blue));
+					ps2.setInt(4, client.getDbID());
+					ps2.executeUpdate();
+				}
+				updatePlayer(client);
 			} else {
 				client.writeCallbackMessage("Updating color failed.");
 			}
