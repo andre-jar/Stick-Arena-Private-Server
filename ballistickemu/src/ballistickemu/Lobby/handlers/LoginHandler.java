@@ -136,8 +136,21 @@ public class LoginHandler {
 			// and now for the inventory
 
 			if (rs.getInt("ban") == 1) {
-				client.write(StickPacketMaker.getErrorPacket("1"));
-				return;
+				PreparedStatement ps1 = DatabaseTools.getDbConnection()
+						.prepareStatement("SELECT id, enddate FROM `bans` WHERE `userid` = ? ORDER BY id DESC LIMIT 1");
+				ps1.setInt(1, client.getDbID());
+				ResultSet rs1 = ps1.executeQuery();
+				rs1.next();
+				BigDecimal dec = rs1.getBigDecimal("enddate");
+				if (dec.longValue() < System.currentTimeMillis()) {
+					PreparedStatement ps2 = DatabaseTools.getDbConnection()
+							.prepareStatement("UPDATE `users` SET `ban` = 0 WHERE `UID` = ?");
+					ps2.setInt(1, client.getDbID());
+					ps2.execute(); // unban if time elapsed
+				} else {
+					client.write(StickPacketMaker.getErrorPacket("1"));
+					return;
+				}
 			}
 			while (!ready) {
 				try (PreparedStatement psz = DatabaseTools.getDbConnection()

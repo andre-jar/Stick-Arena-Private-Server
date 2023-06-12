@@ -423,6 +423,10 @@ public class StickClient {
 		this.write(StickPacketMaker.getBanMsg(name));
 	}
 
+	public void getBanned(int time, String message) {
+		this.write(StickPacketMaker.getBanMsg(time, message));
+	}
+
 	public void writeCallbackMessage(String Message) {
 		this.write(StickPacketMaker.getCallbackPacket(Message));
 	}

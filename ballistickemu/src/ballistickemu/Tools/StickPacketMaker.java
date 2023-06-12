@@ -455,6 +455,16 @@ public class StickPacketMaker {
 		return Result;
 	}
 
+	public static StickPacket getBanMsg(int time, String message) {
+		StickPacket Result = new StickPacket();
+		Result.Append("0e");
+		Result.Append(time);
+		Result.Append(";");
+		Result.Append(message);
+		Result.Append("\0");
+		return Result;
+	}
+
 	public static StickPacket getKickedPacket() {
 		StickPacket Result = new StickPacket();
 		Result.Append("094");
