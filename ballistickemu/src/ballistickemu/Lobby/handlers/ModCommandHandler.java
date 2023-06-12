@@ -160,9 +160,19 @@ public class ModCommandHandler {
 			} finally {
 				DatabaseTools.lock.unlock();
 			}
-		} 
-
-		else if (ModCommandParsed[0].equalsIgnoreCase("::announce")) {
+		} else if (ModCommandParsed[0].equalsIgnoreCase("::ipunban")) {
+			PreparedStatement ps;
+			DatabaseTools.lock.lock();
+			try {
+				ps = DatabaseTools.getDbConnection().prepareStatement("DELETE FROM `ipbans` WHERE `playername` = ?");
+				ps.setString(1, ModCommandParsed[1]);
+				ps.executeUpdate();
+			} catch (SQLException e) {
+				System.out.println("Exception whilst removing IP ban: " + e.toString());
+			} finally {
+				DatabaseTools.lock.unlock();
+			}
+		} else if (ModCommandParsed[0].equalsIgnoreCase("::announce")) {
 			if (ModCommand.length() > 10)
 				Main.getLobbyServer().BroadcastAnnouncement(ModCommand.substring(11).replaceAll("\0", ""));
 		}
