@@ -36,7 +36,7 @@ public class BuyItemRequestHandler {
 		int itemDBID = -1;
 		int iType = ItemType.getItemType(ItemID);
 		StickColour newColour = new StickColour(red1, green1, blue1, red2, green2, blue2);
-		int price = Main.getLobbyServer().getShop().getPriceByItemID(ItemID);
+		int price = Main.getLobbyServer().getShop().getPriceByItemID(client, ItemID);
 
 		// some price checking stuff now
 		if (price == -1) // ie, non-existant item
