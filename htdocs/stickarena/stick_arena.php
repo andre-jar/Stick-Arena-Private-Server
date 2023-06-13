@@ -15,6 +15,8 @@ if(!$db)
 print "result=error";
 exit;
 }
+// Email to send from for verifications.
+$emailFromHeader = 'From: StickEMU <no-reply@localhost.com>';
 
 // declare variables
 if(isset($_POST['username'])){
