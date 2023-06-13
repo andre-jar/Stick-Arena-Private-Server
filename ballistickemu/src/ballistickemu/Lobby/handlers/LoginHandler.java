@@ -109,6 +109,18 @@ public class LoginHandler {
 			int user_level = rs.getInt("user_level");
 			int dbID = rs.getInt("UID");
 
+			if (ticket != 1) {
+				long lastTicket = rs.getBigDecimal("lastticket").longValue();
+				// 8 hours
+				if ((lastTicket + (28800000L)) <= System.currentTimeMillis()) {
+					PreparedStatement ps2 = DatabaseTools.getDbConnection()
+							.prepareStatement("UPDATE `users` SET `ticket` = 1 WHERE `UID` = ?");
+					ps2.setInt(1, client.getDbID());
+					ps2.execute();
+					ticket = 1;
+				}
+			}
+
 			// check if the same user already exists in server
 			StickClient SC = Main.getLobbyServer().getClientRegistry().getClientfromName(splitted[0]);
 			if (SC != null)

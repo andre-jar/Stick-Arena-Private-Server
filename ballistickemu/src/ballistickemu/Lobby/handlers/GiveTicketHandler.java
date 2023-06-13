@@ -79,6 +79,12 @@ public class GiveTicketHandler {
 				ps2.setString(2, client.getName());
 				ps2.executeUpdate();
 
+				PreparedStatement ps3 = DatabaseTools.getDbConnection()
+						.prepareStatement("UPDATE `users` SET `lastticket` = ? WHERE `username` = ?");
+				ps3.setLong(1, System.currentTimeMillis());
+				ps3.setString(2, client.getName());
+				ps3.executeUpdate();
+				client.setTicket(0);
 			} catch (SQLException e) {
 				client.getAnnounce("There was an error collecting creds ticket, try again later");
 				System.out.println("There was an error accepting cred ticket for a user on database.");

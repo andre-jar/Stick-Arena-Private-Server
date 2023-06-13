@@ -144,6 +144,7 @@ CREATE TABLE `users` (
   `deaths` int(11) NOT NULL DEFAULT '0',
   `wins` int(11) NOT NULL DEFAULT '0',
   `ticket` int(11) NOT NULL DEFAULT '1',
+  `lastticket` BIGINT(20) NOT NULL DEFAULT '0',  
   `losses` int(11) NOT NULL DEFAULT '0',
   `red` smallint(3) NOT NULL DEFAULT '255',
   `green` smallint(3) NOT NULL DEFAULT '0',
