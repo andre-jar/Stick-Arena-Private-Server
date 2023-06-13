@@ -190,7 +190,24 @@ CREATE TABLE `bans` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `maps`
+-- Dumping data for table `bans`
 --
 
 LOCK TABLES `bans` WRITE;
+
+DROP TABLE IF EXISTS `maps`;
+CREATE TABLE `maps` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `userid` int(10) unsigned NOT NULL,
+  `slot_id` tinyint(1) NOT NULL DEFAULT '0',
+  `name` text NOT NULL,
+  `mapdata` text NOT NULL,
+   PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `maps`
+--
+
+LOCK TABLES `maps` WRITE;
