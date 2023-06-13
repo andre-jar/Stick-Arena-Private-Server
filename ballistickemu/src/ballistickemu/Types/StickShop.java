@@ -29,14 +29,12 @@ public class StickShop {
 					int mapSlots = set.getInt("mapSlots");
 					switch (mapSlots) {
 					case 0:
-						return 0;
-					case 1:
 						return 400;
-					case 2:
+					case 1:
 						return 800;
-					case 3:
+					case 2:
 						return 1500;
-					case 4:
+					case 3:
 						return 3000;
 					}
 				}
