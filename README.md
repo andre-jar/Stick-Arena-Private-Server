@@ -21,19 +21,19 @@ Improved version of BallistickEMU. The original is probably entirely written by 
 - Buying and cheating items will now correctly set the items in the client without overwriting previous items.
 - Added logic to kick players in matches. Players can't join after they got kicked until a new round starts. Mods can kick without having votes.
 - Added version checking to php script. Accepts 588, 588 and 598 (Dimensions) clients per default. Could be used to restrict Dimensions clients from joining (due to their better viewrange) if you want to allow older clients.
-- Rooms will now properly get deregisted and also threads that will no longer be in use get removed so the garbage collection can do its thing. Also removed the deprecated finalizers. It has never been a good idea to rely on them(although they did't do much here).
+- Rooms will now properly get deregisted and also threads that will no longer be in use get removed so the garbage collection can do its thing. Also removed the deprecated finalizers. It has never been a good idea to rely on them(although they didn't do much here).
 - setKills now correctly updates kills and relogging is no longer required.
 - setColor also does not require relogging anymore.
 - Changed the ban system. It is now possible to ban players a specific amount of time and ip banning also can be time limited (or infinite) from now on. Bans get stored with a timestamp that gets checked at login if the player is still banned.
 - Cred tickets now have different probabilities. To win 5000$ for example is now only a chance of ~0.95% the next item an additional ~0.95% and so on. Cred ticket is also now available every 8 hours like on the original servers. Similarly to the bans a timestamp is used to check for a ticket at login. 
-- Maps can now be loaded and saved on the database with the provided php script. It also now possible to buy map slots if you have a labpass. It is also possible to load maps from the xgen servers for accounts that are not used on your local server. saving can only be done on local servers of course.
+- Maps can now be loaded and saved on the database with the provided php script. It also now possible to buy map slots if you have a labpass. It is also possible to load maps from the xgen servers for accounts that are not used on your local server. Saving can only be done on local servers of course.
 - Added the possibility to add emails to your accounts. This could be used for verification and recovery later on. 
 - Improved/fixed stick_arena.php to work with newer php versions. Also added a check for invalid usernames at creation.
 - Changed php sql statements to actual prepared statements to minimize risk of SQL injections.
 
 # How to set up
 
-- Requirements: Java JDK, Maven, Flash Decompiler(JPEXS is the best I tested so far and I tested a lot), webserver with PHP installed, MySQL database (You can use xampp for webserver and database as a quick start), Flash player(Discontinued but there are version floating in the internet) 
+- Requirements: Java JDK, Maven, Flash Decompiler(JPEXS is the best I tested so far and I tested a lot), webserver with PHP installed, MySQL database (You can use xampp for webserver and database as a quick start), Flash player(Discontinued but there are versions floating around in the internet) 
 - To setup your database create a new database, select it and use the script "Import database\ballistick_struct.sql". It will create any required tables for you. If you use xampp you can use phpAdmin to do this.
 - Place the contents of the folder "htdocs\stickarena" at the root of your webserver. 
 - The last file you need now is a executable jar to run with Java to start you server. Inside the folder "ballistickemu" there is a maven project inside. If you have properly installed maven just run the command "mvn install" inside the folder. If everything worked there should be a file called "ballistickemu-0.0.1-SNAPSHOT-jar-with-dependencies.jar" inside the target folder.
@@ -46,18 +46,18 @@ Improved version of BallistickEMU. The original is probably entirely written by 
 - The final step now is to let the swf clients point at the right ip. By default there are the files sab558.swf, sab588.swf and dimensions.swf in your webserver root folder. These are the stickarena/ballistick clients to connect to the server. You can remove them including the numbered ini files if you don't want to provide the specific swf to users. 
 - You have to edit the swf files with a flash decompiler and change every value where a 127.0.0.1 IP is set to your ip where your server runs. If you use JPEXS be sure to only edit the P-Code and only edit the values neccessary. It is easy to break things here. The 588 and dimensions clients are obfuscated so only very few decompilers will be able to do the job. It should however work with JPEXS(with deobfuscation option enabled).
 - The last step you can do if you want only specific clients on your server is to edit the version_check.php in your webserver root. It checks for the version number and prevents users with differing client numbers from joining.
-- Feel free to report any bugs you may find. Simply create an issue in the github page, I will see what I can do about it. All features are tested with multiple clients but I can not assure everything works (let alone the fact that I did't write a huge portion of the code).
+- Feel free to report any bugs you may find. Simply create an issue in the github page, I will see what I can do about it. All features are tested with multiple clients but I can not assure everything works (let alone the fact that I didn't write a huge portion of the code).
 
 # Troubleshooting
 
--If you can't connect somehow check if everthing is setup like described first. The ips have to the set to the same everywhere. It can also make a difference if you use a domain(like localhost) instead of the ip. You can use both but stick to one of the options in all your configurations. When you connect to the swf it also has to be the same ip. If everthing is setup to use a domain it can probably fail if you are trying to connect with the ip instead(even if you now it is the same machine).
--Even if you host locally you have to access the swf files over the IP. This is because of the security sandbox measures implemented in flash. You can read about it. 
+- If you can't connect somehow check if everthing is setup like described first. The ips have to the set to the same everywhere. It can also make a difference if you use a domain(like localhost) instead of the ip. You can use both but stick to one of the options in all your configurations. When you connect to the swf it also has to be the same ip. If everything is setup to use a domain it can probably fail if you are trying to connect with the ip instead(even if you now it is the same machine).
+- Even if you host locally you have to access the swf files over the IP. This is because of the security sandbox measures implemented in flash. You can read about it. 
 
 # Additional info
 
--Normal accounts without moderator permissions have limitations on which colors they can use. They will appear as red if the color is not allowed. This seems to be coded into the clients, it will still get saved properly on the server and database. Moderators are exempt from this restriction.
--If the file gets stored with windows line-endings (CR LF) instead of linux endings (LF) there can be minor issues that arise (credits bugged, text strings not how they should be).
+- Normal accounts without moderator permissions have limitations on which colors they can use. They will appear as red if the color is not allowed. This seems to be coded into the clients, it will still get saved properly on the server and database. Moderators are exempt from this restriction.
+- If the file gets stored with windows line-endings (CR LF) instead of linux endings (LF) there can be minor issues that arise (credits bugged, text strings not how they should be).
 
 # Future updates 
 
--There are quite a few additional bugfixes and features already completed. They are not quite ready to be uploaded so stay tuned for future updates.
+- There are quite a few additional bugfixes and features already completed. They are not quite ready to be uploaded so stay tuned for future updates.
