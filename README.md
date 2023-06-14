@@ -15,80 +15,49 @@ Improved version of BallistickEMU. The original is probably entirely written by 
 - Easier to read syntax help for color and spinner commands (no annoying black glitch with the <> characters)
 - Fixed stick_arena.php to work with PHP 7 and up.
 
-# Hints for those who want to continue improving the project
+# Additional Changes @andre-jar
 
-## Fix the inventory
+- Changed project to maven project, which makes handling depedencies and building a jar less of a hassle imo.
+- Buying and cheating items will now correctly set the items in the client without overwriting previous items.
+- Added logic to kick players in matches. Players can't join after they got kicked until a new round starts. Mods can kick without having votes.
+- Added version checking to php script. Accepts 588, 588 and 598 (Dimensions) clients per default. Could be used to restrict Dimensions clients from joining (due to their better viewrange) if you want to allow older clients.
+- Rooms will now properly get deregisted and also threads that will no longer be in use get removed so the garbage collection can do its thing. Also removed the deprecated finalizers. It has never been a good idea to rely on them(although they did't do much here).
+- setKills now correctly updates kills and relogging is no longer required.
+- setColor also does not require relogging anymore.
+- Changed the ban system. It is now possible to ban players a specific amount of time and ip banning also can be time limited (or infinite) from now on. Bans get stored with a timestamp that gets checked at login if the player is still banned.
+- Cred tickets now have different probabilities. To win 5000$ for example is now only a chance of ~0.95% the next item an additional ~0.95% and so on. Cred ticket is also now available every 8 hours like on the original servers. Similarly to the bans a timestamp is used to check for a ticket at login. 
+- Maps can now be loaded and saved on the database with the provided php script. It also now possible to buy map slots if you have a labpass. It is also possible to load maps from the xgen servers for accounts that are not used on your local server. saving can only be done on local servers of course.
+- Added the possibility to add emails to your accounts. This could be used for verification and recovery later on. 
+- Improved/fixed stick_arena.php to work with newer php versions. Also added a check for invalid usernames at creation.
+- Changed php sql statements to actual prepared statements to minimize risk of SQL injections.
 
-Buying or adding a new item to database will not properly add it to the stick inventory data you've already read. You can't properly set it as selected, and if you buy another item, it will overwrite the previous one (on client only, it will exist on database) 
-<details>
-   <summary>Possible solutions</summary>
-  
-   1. Make the player's client automatically re-read and re-set inventory data from the inventory table after purchasing or adding an item.
-   2. Make the player automatically re-login (bad idea, noob idea).
-   3. Change the way inventories are being handled entirely. Rewrite the code.
-</details>
+# How to set up
 
-## Fix the in-game kick
+- Requirements: Java JDK, Maven, Flash Decompiler(JPEXS is the best I tested so far and I tested a lot), webserver with PHP installed, MySQL database (You can use xampp for webserver and database as a quick start), Flash player(Discontinued but there are version floating in the internet) 
+- To setup your database create a new database, select it and use the script "Import database\ballistick_struct.sql". It will create any required tables for you. If you use xampp you can use phpAdmin to do this.
+- Place the contents of the folder "htdocs\stickarena" at the root of your webserver. 
+- The last file you need now is a executable jar to run with Java to start you server. Inside the folder "ballistickemu" there is a maven project inside. If you have properly installed maven just run the command "mvn install" inside the folder. If everything worked there should be a file called "ballistickemu-0.0.1-SNAPSHOT-jar-with-dependencies.jar" inside the target folder.
+- After you got all the files you can already run the server in a localhost environment. Just run the provided "ballistickemu\run.bat" after starting the database to start the server. You can use the provided swfs that are bound to 127.0.0.1 to see if everything works as it should. The database, webserver and stickarena server have to run all at the same time. You need to connect directly to the swf-File(Adobe Flashplayer can directly connect to URLs)
+- Edit stick_arena.php in your webserver root and change the first few lines to your database credentials and address.
+- If you don't want to let users also download maps from xgen servers you can set the variable getMapsXGenServer in api.php to false.
+- Edit crossdomain.xml and add entries for your ip and domain like the provided example entries.
+- Open settings558b.ini/settings588b.ini/settings598.ini depending on which client you want to use and search for the entries which start with &sConnectPort and &sServerName. Change the entries to the port and ip where the java server is running. You can also set the server type there. This is the list that the client uses to connect to a server.
+- In the folder where the run.bat is located there is also a file called config.properties. Put in the credentials and addresses of your server and database in it.
+- The final step now is to let the swf clients point at the right ip. By default there are the files sab558.swf, sab588.swf and dimensions.swf in your webserver root folder. These are the stickarena/ballistick clients to connect to the server. You can remove them including the numbered ini files if you don't want to provide the specific swf to users. 
+- You have to edit the swf files with a flash decompiler and change every value where a 127.0.0.1 IP is set to your ip where your server runs. If you use JPEXS be sure to only edit the P-Code and only edit the values neccessary. It is easy to break things here. The 588 and dimensions clients are obfuscated so only very few decompilers will be able to do the job. It should however work with JPEXS(with deobfuscation option enabled).
+- The last step you can do if you want only specific clients on your server is to edit the version_check.php in your webserver root. It checks for the version number and prevents users with differing client numbers from joining.
+- Feel free to report any bugs you may find. Simply create an issue in the github page, I will see what I can do about it. All features are tested with multiple clients but I can not assure everything works (let alone the fact that I did't write a huge portion of the code).
 
-Kicking a player is not working for regular players. It works for moderators but it just disconnects a player, and that's stupid.
-<details>
-   <summary>Solutions</summary>
-  
-   1. In KickHandler, make everybody's kick vote for a new user add to a list.
-   2. Have a listener or something like that for that list, to keep checking if that list finally contains x amount of votes.
-   3. Also keep checking for how many players in total there are in the game.
-   4. Have a var x to keep updating. If the game has 3 players, 2 kicks are required. If 4, then 3 are required and so on. Like on sa.
-   5. Once the list reached x amount of votes, send the "K" packet to the voted user.
-   6. Add the kicked out user's id to a blacklist so he can't join this game again.
-</details>
+# Troubleshooting
 
-## Properly deregister rooms if nobody is in them
+-If you can't connect somehow check if everthing is setup like described first. The ips have to the set to the same everywhere. It can also make a difference if you use a domain(like localhost) instead of the ip. You can use both but stick to one of the options in all your configurations. When you connect to the swf it also has to be the same ip. If everthing is setup to use a domain it can probably fail if you are trying to connect with the ip instead(even if you now it is the same machine).
+-Even if you host locally you have to access the swf files over the IP. This is because of the security sandbox measures implemented in flash. You can read about it. 
 
-Although games disappear from the 01 room request packet for everybody's client, they are still active or remembered in the server so creating another room with the same name will make you litteraly disappear until you come back to lobby.
-<details>
-   <summary>Possible solutions</summary>
-   
-   1. Check if there is any StickRoom type list or whatever where all new rooms are additionally kept and make sure the room is removed from there aswel. It may be located both in StickRoom and StickClient tbh.
-   2. Follow anything related to StickRoom or StickRoomRegistry line by line and find the issue. I honestly didn't even get to this so idk myself, just assuming.
-</details>
+# Additional info
 
-## !setkills is buggy
+-Normal accounts without moderator permissions have limitations on which colors they can use. They will appear as red if the color is not allowed. This seems to be coded into the clients, it will still get saved properly on the server and database. Moderators are exempt from this restriction.
+-If the file gets stored with windows line-endings (CR LF) instead of linux endings (LF) there can be minor issues that arise (credits bugged, text strings not how they should be).
 
-I think I recall setkills either not working or just being buggy.. look into it.
-<details>
-   <summary>Solutions</summary>
-  
-   - There's probably a small error, find it and get rid of it in PlayersCommandsHandler.
-   - Probably will have to re-read and re-set the player's stats from database again just like with the inventory glitch or re-login.
-</details>
+# Future updates 
 
-## Remove ::disconnect command
-
-Do I need to say more? Remove that cancerous command, unless you want to moderate only by yourself. We know how mods on the original SA were, you don't want that all over again. Or just separate mod powers with user level 1 and user level 2.
-
-## Improve ::ban further
-
-Ok. So I made the player receive ban message but what about giving the user actual ban reason and time? It's not neccessary but we get closer to real SA if you add it. Would require for you to add a ban table on database to keep the reasons and create ban schedule/event.
-
-## Create event on database for cred ticket.
-
-You can make it available per every login but that can be easily abused for no reason. Create an event on database instead to keep setting tickets to 1 for users every 24 hours. 
-
-## Have a table for custom maps
-
-Ok, the xgen api is still up.. but what if it's not? And what if you're using an account name that you don't actually have the password to on original SA? You're stuck.
-
-<details>
-   <summary>Solutions</summary>
-   
-   1. Create new table on database for custom maps of users.
-   2. Write custom api for saving and loading maps from your own database.
-   3. Replace the api links in SA SWF client.
-   
-</details>
-
-# Why won't you finish the improvement?
-
-I'm moving on. I realized that if I host this server for the european players, I'll just be stuck with stick arena and the community for years again. It'stime to move on. 
-
-Good luck =)
+-There are quite a few additional bugfixes and features already completed. They are not quite ready to be uploaded so stay tuned for future updates.
