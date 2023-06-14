@@ -56,7 +56,7 @@ public class QuickplayTool {
     {
         String[] Name = new String[2];
         Name[0] = FirstNames.get(getRandomNum(0, FirstNames.size()));
-        Name[1] = LastNames.get(getRandomNum(1, FirstNames.size()));
+        Name[1] = LastNames.get(getRandomNum(1, LastNames.size()));
         return Name[0] + Name[1];
     }
 
@@ -70,10 +70,21 @@ public class QuickplayTool {
     {
         LinkedHashMap<Integer, StickItem> Inventory = new LinkedHashMap<>();
         
-        StickColour SpinnerCol = new StickColour(getRandomNum(-99, 255), getRandomNum(-99, 255), getRandomNum(-99, 255),
-                getRandomNum(-99, 255), getRandomNum(-99, 255), getRandomNum(-99, 255));
+        int[] color = new int[3];
+        int greater128 = new Random().nextInt(3);
+        int second=new Random().nextInt(3);
+        while(second==greater128) {
+        	second = new Random().nextInt(3);
+        }
+        int third = 3 - greater128 - second;
+        color[greater128] = getRandomNum(128,255);
+        color[second] = getRandomNum(0,255);
+        int sum = color[second]+color[greater128];
+        color[third] = getRandomNum(sum-248,522-sum);
+        
+		StickColour SpinnerCol = new StickColour(color[0], color[1], color[2],color[0], color[1], color[2]);
 
-        int SpinnerID = getRandomNum(100, 141);
+        int SpinnerID = 100;
 
         //    public StickItem(int _ItemID, int _dbID, int _userDBID, int _itemType, Boolean _selected, StickColour _colour)
         StickItem Spinner = new StickItem(SpinnerID, 0, -1, 1, true, SpinnerCol);
