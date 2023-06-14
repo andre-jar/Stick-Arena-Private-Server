@@ -1,3 +1,3 @@
 @echo off
-java -jar "dist\BalliStickEMU.jar"
+java -jar "target\ballistickemu-0.0.1-SNAPSHOT-jar-with-dependencies.jar"
 pause
