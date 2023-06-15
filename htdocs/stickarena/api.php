@@ -158,7 +158,7 @@ if($method == "xgen.stickarena.maps.list")
                     // additional headers
                     $headers[] = $emailFromHeader;
 				    $subject = "StickEMU  Email Verification";
-				    $message = "<p>Hi ".$username.",</p><p>Thanks for adding an e-mail address to your XGen account. <a href=\"http://127.0.01/stickarena/verifyEmail.php?uid=".$uid."&amp;key=".$randomkey."\" target=\"_blank\">Click here to complete verification and receive your 500 Cred!</a></p><p>Cheers,<br/>Team StickEMU</p>";
+				    $message = "<p>Hi ".$username.",</p><p>Thanks for adding an e-mail address to your StickEMU account. <a href=\"http://127.0.01/stickarena/verifyEmail.php?uid=".$uid."&amp;key=".$randomkey."\" target=\"_blank\">Click here to complete verification and receive your 500 Cred!</a></p><p>Cheers,<br/>Team StickEMU</p>";
 				    mail($email, $subject, $message ,implode("\r\n", $headers));
 			        $removePreExistingVerifications = mysqli_execute_query($db, "DELETE FROM `pending_verifications` WHERE userid=? AND verificationtype=0",[$uid]);
 				    $resultGenKey = mysqli_execute_query($db, "INSERT INTO `pending_verifications` (userid,validationkey,verificationtype,expirydate) VALUES (?,?,0,?)", [$uid, $randomkey, $milliseconds]);
