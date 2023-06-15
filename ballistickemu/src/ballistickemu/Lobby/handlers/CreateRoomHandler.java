@@ -79,6 +79,7 @@ public class CreateRoomHandler {
 
                 Main.getLobbyServer().getRoomRegistry().RegisterRoom(newRoom);
                 newRoom.GetCR().registerClient(client);
+                newRoom.getTotalJoinedClients().add(client.getName());
                 client.setRoom(newRoom);
                 client.setLobbyStatus(false);
                 Main.getLobbyServer().BroadcastPacket(StickPacketMaker.Disconnected(client.getUID()));

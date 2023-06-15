@@ -91,6 +91,7 @@ public class NewClientHandler {
 				if (!client.getQuickplayStatus())
 					Main.getLobbyServer().BroadcastPacket(StickPacketMaker.Disconnected(client.getUID()));
 				Room.BroadcastToRoom(StickPacketMaker.getNewPlayerUID(client.getUID()));
+				Room.getTotalJoinedClients().add(client.getName());
 
 				String petID = StringTool.PadStringLeft(String.valueOf(client.getSelectedPet().getItemID() - 200), "0",
 						2);

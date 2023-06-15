@@ -25,11 +25,13 @@ import java.util.List;
 import java.util.Set;
 import java.util.LinkedHashMap;
 import ballistickemu.Main;
+import ballistickemu.Lobby.handlers.PlayerCommandHandler;
 import ballistickemu.Tools.DatabaseTools;
 import ballistickemu.Tools.StickPacketMaker;
 
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.sql.PreparedStatement;
+import java.sql.SQLException;
 
 /**
  *
@@ -52,6 +54,7 @@ public class StickRoom {
 	private List<Integer> blacklist;
 	private StickClient lastKickTarget;
 	Set<StickClient> kickVoters;
+	Set<String> totalJoinedClients;
 
 	public StickRoom() {
 		this.CR = new StickClientRegistry(false);
@@ -74,6 +77,7 @@ public class StickRoom {
 		Main.getLobbyServer().getRoomRegistry().scheduleRoomTimer(_Name, new OnTimedEvent());
 		blacklist = new ArrayList<>();
 		kickVoters = new HashSet<>();
+		totalJoinedClients = new HashSet<>();
 	}
 
 	public void BroadcastToRoom(StickPacket packet) {
@@ -169,6 +173,10 @@ public class StickRoom {
 			return null;
 	}
 
+	public Set<String> getTotalJoinedClients() {
+		return totalJoinedClients;
+	}
+
 	public void setStorageKey(int key) {
 		this.StorageKey = key;
 	}
@@ -237,6 +245,7 @@ public class StickRoom {
 			if (CR.getAllClients().isEmpty()) {
 				Main.getLobbyServer().getRoomRegistry()
 						.deRegisterRoom(Main.getLobbyServer().getRoomRegistry().GetRoomFromName(Name));
+				updateJoinedClients();
 				Thread.currentThread().interrupt();
 				return;
 			}
@@ -248,6 +257,25 @@ public class StickRoom {
 			if (RoundTime == 1) {
 				RoundTime = 300;
 				updateStats(getWinner());
+			}
+
+		}
+
+		private void updateJoinedClients() {
+			try {
+				for (String s : totalJoinedClients) {
+					PreparedStatement ps = DatabaseTools.getDbConnection()
+							.prepareStatement("UPDATE `users` SET `rounds` = `rounds` + 1 WHERE `username` = ?");
+					ps.setString(1, s);
+					ps.executeUpdate();
+					StickClient c = Main.getLobbyServer().getClientRegistry().getClientfromName(s);
+					if(c!=null) {
+						c.incrementRounds();
+						PlayerCommandHandler.updatePlayer(c);
+					}
+				}
+			} catch (SQLException e) {
+				System.out.println("Problem updating user rounds stat.");
 			}
 
 		}
@@ -332,8 +360,8 @@ public class StickRoom {
 						} else {
 							loss = 1;
 						}
-						PreparedStatement ps = DatabaseTools.getDbConnection().prepareStatement(
-								"UPDATE `users` SET `rounds` = `rounds` + 1, `kills` = `kills` + ?, `deaths` = `deaths` + ?, "
+						PreparedStatement ps = DatabaseTools.getDbConnection()
+								.prepareStatement("UPDATE `users` SET `kills` = `kills` + ?, `deaths` = `deaths` + ?, "
 										+ "`wins` = `wins` + ?, `losses` = `losses` + ? WHERE `UID` = ?");
 						ps.setInt(1, c.getGameKills());
 						ps.setInt(2, c.getGameDeaths());
@@ -349,8 +377,11 @@ public class StickRoom {
 						System.out.println(e);
 					}
 				}
+				updateJoinedClients();
+				totalJoinedClients.clear();
 				for (StickClient c : CR.getAllClients()) {
 					try {
+						totalJoinedClients.add(c.getName());
 						c.setGameKills(0);
 						c.setGameDeaths(0);
 					} catch (Exception e) {

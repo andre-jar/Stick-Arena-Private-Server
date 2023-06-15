@@ -214,6 +214,10 @@ public class StickClient {
 			this.game_wins = this.game_wins - 10;
 	}
 
+	public void incrementRounds() {
+		rounds++;
+	}
+
 	public void setIsReal(Boolean Real) {
 		this.IsReal = Real;
 	}
