@@ -86,6 +86,7 @@ if($action=="create")
 	global $email_address;
 	if($usercol == "000000000")
 		$usercol = "000000001";
+	$milliseconds = floor(microtime(true) * 1000);
 
 	if (!isValidStrings([$username])) {
 		$message  = 'result=error';
@@ -100,9 +101,9 @@ if($action=="create")
 	       $message = 'result=email_duplicate';
 		   die($message);
 	   }	
-	   $result = mysqli_execute_query($db, "INSERT INTO `users` (USERname, USERpass, red, green, blue, cash, email_address) VALUES(?,?,?,?,?,?,?,?)", [$username, $userpass, $colour[0], $colour[1], $colour[2], 0, $email_address]);
+	   $result = mysqli_execute_query($db, "INSERT INTO `users` (USERname, USERpass, red, green, blue, cash, email_address, creationdate) VALUES(?,?,?,?,?,?,?,?)", [$username, $userpass, $colour[0], $colour[1], $colour[2], 0, $email_address, $milliseconds]);
 	} else {
-	   $result = mysqli_execute_query($db, "INSERT INTO `users` (USERname, USERpass, red, green, blue) VALUES(?,?,?,?,?,?)", [$username, $userpass, $colour[0], $colour[1], $colour[2]);
+	   $result = mysqli_execute_query($db, "INSERT INTO `users` (USERname, USERpass, red, green, blue, creationdate) VALUES(?,?,?,?,?,?)", [$username, $userpass, $colour[0], $colour[1], $colour[2], $milliseconds]);
 	}
 	if (!$result) {
 		$message  = 'result=error';

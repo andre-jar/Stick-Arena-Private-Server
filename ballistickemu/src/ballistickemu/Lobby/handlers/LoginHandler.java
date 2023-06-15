@@ -247,6 +247,8 @@ public class LoginHandler {
 			// and send the packet
 			colour = client.getSelectedSpinner().getColour().getColour1AsString();
 			String colour2 = client.getSelectedSpinner().getColour().getColour2AsString();
+			updateLastLoginDate(client.getDbID(),
+					client.getIoSession().getRemoteAddress().toString().substring(1).split(":")[0]);
 			client.write(StickPacketMaker.getLoginSuccess(client.getUID(), paddedUN, colour, colour2, kills, deaths,
 					wins, losses, rounds, labpass, expiry, ticket, cash, user_level));
 			Main.getLobbyServer().getClientRegistry().registerClient(client);
@@ -254,6 +256,21 @@ public class LoginHandler {
 
 		} catch (SQLException e) {
 			System.out.println("Exception at login: + " + e.toString());
+		}
+	}
+
+	private static void updateLastLoginDate(int dbID, String ip) {
+
+		PreparedStatement ps1;
+		try {
+			ps1 = DatabaseTools.getDbConnection()
+					.prepareStatement("UPDATE `users` SET `lastlogindate` = ?, `ip` = ? WHERE `UID` = ?");
+			ps1.setLong(1, System.currentTimeMillis());
+			ps1.setString(2, ip);
+			ps1.setInt(3, dbID);
+			ps1.executeUpdate();
+		} catch (SQLException e) {
+			System.out.println("Error while update last login date for ID: " + dbID);
 		}
 	}
 }

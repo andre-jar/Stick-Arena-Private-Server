@@ -152,6 +152,8 @@ CREATE TABLE `users` (
   `ban` tinyint(1) DEFAULT '0',
   `ip` text,
   `email_address` text,
+  `creationdate` BIGINT(20) NOT NULL DEFAULT '0',
+  `lastlogindate` BIGINT(20) NOT NULL DEFAULT '0',
   UNIQUE KEY `USERname` (`USERname`(20)),
   KEY `UID` (`UID`)
 ) ENGINE=MyISAM AUTO_INCREMENT=2480 DEFAULT CHARSET=latin1;
