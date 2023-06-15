@@ -252,13 +252,13 @@ public class ModCommandHandler {
 				banResult = ps.executeUpdate();
 
 				if (banResult == -1) {
-					client.writeMessage("There was an error banning " + playerName + ".");
+					client.writeCallbackMessage("There was an error banning " + playerName + ".");
 					return banResult;
 				} else if (banResult == 0) {
-					client.writeMessage("User " + playerName + " does not exist.");
+					client.writeCallbackMessage("User " + playerName + " does not exist.");
 					return banResult;
 				} else if (banResult >= 1) {
-					client.writeMessage("User " + playerName + " was banned successfully.");
+					client.writeCallbackMessage("User " + playerName + " was banned successfully.");
 				}
 				PreparedStatement ps4 = DatabaseTools.getDbConnection()
 						.prepareStatement("SELECT UID FROM `users` WHERE `username` = ?");

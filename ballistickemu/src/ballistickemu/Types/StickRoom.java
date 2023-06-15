@@ -189,7 +189,8 @@ public class StickRoom {
 		this.CR.ClientsLock.writeLock().lock();
 		try {
 			for (StickClient SC : this.CR.getAllClients()) {
-				SC.getIoSession().close(false);
+				SC.write(StickPacketMaker.getErrorPacket("5"));
+				CR.deregisterClient(SC);
 			}
 			Main.getLobbyServer().getRoomRegistry()
 					.deRegisterRoom(Main.getLobbyServer().getRoomRegistry().GetRoomFromName(Name));

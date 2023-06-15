@@ -72,7 +72,18 @@ public class PacketHandlerGame {
 
 			else if (Packet.substring(0, 2).equalsIgnoreCase("06")) {
 				MapCycleRequestHandler.HandlePacket(client, Packet);
+			} else if (Packet.substring(0, 2).equalsIgnoreCase("0g")) {
+				ModWarnHandler.HandlePacket(client, Packet);
+				return;
 
+			} else if (Packet.substring(0, 2).equalsIgnoreCase("0f")) {
+				ModBanHandler.HandlePacket(client, Packet);
+			} else if (Packet.substring(0, 2).equalsIgnoreCase("0j")) {
+				ModGlobalHandler.HandlePacket(client, Packet);
+			} else if (Packet.substring(0, 2).equalsIgnoreCase("07")) {
+				ModRequestIPHandler.HandlePacket(client, Packet);
+			} else if (Packet.substring(0, 2).equalsIgnoreCase("0l")) {
+				ModBanNameHandler.HandlePacket(client, Packet);
 			} else if (Packet.substring(0, 2).equalsIgnoreCase("0h")) {
 				FindRequestHandler.HandlePacket(client, Packet);
 			} else if (Packet.substring(0, 2).equalsIgnoreCase("0i")) {
