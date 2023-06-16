@@ -156,9 +156,7 @@ if($action=="round_stats")
 		$losses = "1";
 	}
 
-$querystring = sprintf("UPDATE USERS set `kills` = `kills` + '%s', `deaths` = `deaths` + '%s', `rounds` = `rounds` + '%s', `wins` = `wins` + '%s', `losses` = `losses` + '%s' WHERE `USERname` = '%s' AND `USERpass` = '%s'", $kills, $deaths, $roundsplayed, $wins, $losses, $username, $password);
-
-$result = mysqli_query($db, $querystring);
+	$result = mysqli_execute_query($db, "UPDATE USERS set `kills` = `kills` + ?, `deaths` = `deaths` + ?, `rounds` = `rounds` + ?, `wins` = `wins` + ?, `losses` = `losses` + ? WHERE `USERname` = ? AND `USERpass` = ?", [$kills, $deaths, $roundsplayed, $wins, $losses, $username, $password]);
 	if (!$result) {
 		$message  = 'result=error';
 		die($message);
