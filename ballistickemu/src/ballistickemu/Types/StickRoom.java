@@ -395,4 +395,23 @@ public class StickRoom {
 			}
 		}
 	}
+	
+	public boolean isFull(StickClient client) {
+		int numPlayers = this.CR.getAllClients().size();
+		if (client.getPass() || getNeedsPass()) {
+			if (numPlayers > 5) {
+				return true;
+			}
+		} else {
+			if (numPlayers > 3) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public boolean usesCustomMap()
+	{
+		return (MapID.charAt(0)>=86 && MapID.charAt(0)<=90);
+	}
 }

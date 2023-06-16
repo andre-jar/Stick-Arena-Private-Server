@@ -78,13 +78,14 @@ public class StickRoomRegistry {
 		return null;
 	}
 
-	public String GetRoomPacketInfo() {
+	public String GetRoomPacketInfo(StickClient client) {
 		this.RoomLock.readLock().lock();
 		try {
 			StringBuilder SB = new StringBuilder();
 			SB.append("_0;");
 			for (StickRoom S : GetAllRooms()) {
-				if (!S.getPrivacy().booleanValue()) {
+				if (!S.getPrivacy().booleanValue() && !S.isFull(client)
+						&& (!S.getNeedsPass() || client.getPass() || S.getVIPs().containsValue(client))) {
 					SB.append(S.getName());
 
 					if (S.getNeedsPass().booleanValue()) {

@@ -29,6 +29,6 @@ public static void handlePacket(StickClient client)
         {
 //there _was_ a piece of code here which handled people leaving rooms. the sab client now sends the join lobby packet, so code's migrated to there
     //newclienthandler.java
-            client.write(StickPacketMaker.getRoomList());
+            client.write(StickPacketMaker.getRoomList(client));
         }
 }

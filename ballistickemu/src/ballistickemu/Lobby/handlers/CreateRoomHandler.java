@@ -61,8 +61,9 @@ public class CreateRoomHandler {
                     {
                         if(VIPList.length > 0)
                         {
-                            if (Main.getLobbyServer().getClientRegistry().UIDExists(s))
-                                VIPMap.put(s, Main.getLobbyServer().getClientRegistry().getClientfromUID(s));
+    						StickClient vipClient = Main.getLobbyServer().getClientRegistry().getClientfromName(s);
+    						if (vipClient != null)
+    							VIPMap.put(s, vipClient);
                         }
                     }
                 }

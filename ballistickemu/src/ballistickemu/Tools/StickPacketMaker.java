@@ -45,10 +45,10 @@ public class StickPacketMaker {
 		return Result;
 	}
 
-	public static StickPacket getRoomList() {
+	public static StickPacket getRoomList(StickClient client) {
 		StickPacket Result = new StickPacket();
 		Result.Append("01");
-		Result.Append(Main.getLobbyServer().getRoomRegistry().GetRoomPacketInfo());
+		Result.Append(Main.getLobbyServer().getRoomRegistry().GetRoomPacketInfo(client));
 		Result.Append("\0");
 		return Result;
 	}

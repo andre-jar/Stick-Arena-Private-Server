@@ -66,6 +66,34 @@ public class StickClientRegistry {
 			Main.getLobbyServer().BroadcastPacket(StickPacketMaker.Disconnected(client.getUID()));
 		} else if (client.getRoom() != null) {
 			StickRoom room = client.getRoom();
+			if (room.getCreatorName().equals(client.getName())) {
+				if (room.usesCustomMap()) {
+					for (StickClient c : room.GetCR().Clients.values()) {
+						if (!c.getName().equals(client.getName())) {
+							c.write(StickPacketMaker.getErrorPacket("2"));
+							room.GetCR().deregisterClient(c);
+							try {
+								Thread.sleep(100);   // Clients don't properly update without waiting somehow
+							} catch (InterruptedException e) {
+								System.out.println("Failed to wait to kick remaining players in a custom map room.");
+							}
+						}
+					}
+				} else if (room.getNeedsPass()) {
+					for (StickClient c : room.GetCR().Clients.values()) {
+						if (!c.getPass()) {
+							c.write(StickPacketMaker.getErrorPacket("2"));
+							room.GetCR().deregisterClient(c);
+							try {
+								Thread.sleep(100);  // Clients don't properly update without waiting somehow
+							} catch (InterruptedException e) {
+								System.out.println("Failed to wait to kick remaining non-VIP players.");
+							}
+						}
+					}
+				}
+
+			}
 
 			// only allow access if another thread isn't reading the resource
 			room.GetCR().ClientsLock.writeLock().lock();

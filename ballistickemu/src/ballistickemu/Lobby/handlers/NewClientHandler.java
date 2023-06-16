@@ -84,6 +84,15 @@ public class NewClientHandler {
 					client.write(StickPacketMaker.getErrorPacket("4"));
 					return; // Disconnects the player if he tries to join a server he got kicked out of
 				}
+				if (Room.isFull(client)) {
+					client.write(StickPacketMaker.getErrorPacket("42"));
+					return; // Blocks user from joining full room. Fix when a better solutions is found
+				}
+				if (Room.getNeedsPass() && !client.getPass() && !Room.getVIPs().containsValue(client)) {
+					client.write(StickPacketMaker.getErrorPacket("42"));
+					return; // Disconnects if player tries to join lab pass match without pass. Fix when a
+							// better solution is found
+				}
 				client.setLobbyStatus(false);
 				client.setRequiresUpdate(true);
 				Room.GetCR().registerClient(client);
