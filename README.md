@@ -25,11 +25,23 @@ Improved version of BallistickEMU. The original is probably entirely written by 
 - setKills now correctly updates kills and relogging is no longer required.
 - setColor also does not require relogging anymore.
 - Changed the ban system. It is now possible to ban players a specific amount of time and ip banning also can be time limited (or infinite) from now on. Bans get stored with a timestamp that gets checked at login if the player is still banned.
-- Cred tickets now have different probabilities. To win 5000$ for example is now only a chance of ~0.95% the next item an additional ~0.95% and so on. Cred ticket is also now available every 8 hours like on the original servers. Similarly to the bans a timestamp is used to check for a ticket at login. 
+- Cred tickets now have different probabilities. To win 5000$ for example is now only a chance of ~0.95% the next ticket an additional ~0.95% and so on. Cred ticket is also now available every 8 hours like on the original servers. Similarly to the bans a timestamp is used to check for a ticket at login. 
 - Maps can now be loaded and saved on the database with the provided php script. It also now possible to buy map slots if you have a labpass. It is also possible to load maps from the xgen servers for accounts that are not used on your local server. Saving can only be done on local servers of course.
 - Added the possibility to add emails to your accounts. This could be used for verification and recovery later on. 
 - Improved/fixed stick_arena.php to work with newer php versions. Also added a check for invalid usernames at creation.
 - Changed php sql statements to actual prepared statements to minimize risk of SQL injections.
+- Made quick start spinners much more like the original. Added missing player names to quickstart.
+- Added possibility to handle map ratings. Implement your own logic if you want to process them.
+- Added missing SAB Ballistick and Dimensions spinners to shop.
+- Added highscore boards as php scripts. You can choose between the old style and the new style.
+- Rounds stat is now updated properly. Every started round counts towards completed/forfeited rounds stat. Multiple joining of the same match will only be counted once.
+- Added support for all the slash commands from the game. Added missing handlers for them.
+- Method killrooom now sends the correct packet to the clients.
+- Database now stores the creation date and last login date of users.
+- Created Event on database to reduce the labpass days every day. 
+- Fixed a bug where vips would not get added properly. Also only vips and labpass owners can now join labpass games. Also kicks vip players now if the game creator left. Also kicks players if it is a custom map and the creator left.
+- Labpass matches are no longer visible for normal players and also full rooms are also no longer visible. Also full games can't be joined any more now.
+- Restricted a few player commands. Normal players should not be allowed to cheat kills or change color any way they want (which would kill the purpose of shop and credits a bit). Also restricted some of the special spinners to labpass owners.
 
 # How to set up
 
