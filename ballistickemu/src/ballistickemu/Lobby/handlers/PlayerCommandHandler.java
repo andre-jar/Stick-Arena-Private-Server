@@ -27,31 +27,31 @@ public class PlayerCommandHandler {
 	{
 		String[] C_Splitted = CommandStr.replaceAll("\0", "").split(" ");
 
-		if (C_Splitted[0].equalsIgnoreCase("!setcolor")) {
+		if (C_Splitted[0].equalsIgnoreCase("!setcolor") && client.getModStatus()) {
 			setNewColor(client, getArgs(CommandStr, "!setcolor"), false);
 			return;
 		}
-		if (C_Splitted[0].equalsIgnoreCase("!setpetcolor")) {
+		if (C_Splitted[0].equalsIgnoreCase("!setpetcolor") && client.getModStatus()) {
 			setNewColor(client, getArgs(CommandStr, "!setpetcolor"), true);
 			return;
 		}
-		if (C_Splitted[0].equalsIgnoreCase("!builder")) {
+		if (C_Splitted[0].equalsIgnoreCase("!builder") && client.getPass()) {
 			addSpinner(client, getArgs(CommandStr, "!builder"), 181);
 			return;
 		}
-		if (C_Splitted[0].equalsIgnoreCase("!fuzzy")) {
+		if (C_Splitted[0].equalsIgnoreCase("!fuzzy") && client.getPass()) {
 			addSpinner(client, getArgs(CommandStr, "!fuzzy"), 182);
 			return;
 		}
-		if (C_Splitted[0].equalsIgnoreCase("!canes")) {
+		if (C_Splitted[0].equalsIgnoreCase("!canes") && client.getPass()) {
 			addSpinner(client, getArgs(CommandStr, "!canes"), 184);
 			return;
 		}
-		if (C_Splitted[0].equalsIgnoreCase("!hearts")) {
+		if (C_Splitted[0].equalsIgnoreCase("!hearts") && client.getPass()) {
 			addSpinner(client, getArgs(CommandStr, "!hearts"), 185);
 			return;
 		}
-		if (C_Splitted[0].equalsIgnoreCase("!bluehead")) {
+		if (C_Splitted[0].equalsIgnoreCase("!bluehead") && client.getPass()) {
 			addSpinner(client, getArgs(CommandStr, "!bluehead"), 186);
 			return;
 		}
@@ -59,7 +59,7 @@ public class PlayerCommandHandler {
 			addSpinner(client, getArgs(CommandStr, "!modspinner"), 183);
 			return;
 		}
-		if (C_Splitted[0].equalsIgnoreCase("!setkills") && C_Splitted.length > 1) {
+		if (C_Splitted[0].equalsIgnoreCase("!setkills") && C_Splitted.length > 1  && client.getModStatus()) {
 			setKills(client, C_Splitted[1]);
 		}
 	}
