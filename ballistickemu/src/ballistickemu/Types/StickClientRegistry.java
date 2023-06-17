@@ -19,17 +19,23 @@
  */
 package ballistickemu.Types;
 
-import java.util.LinkedHashMap;
 import java.util.Collection;
-import ballistickemu.Tools.StickPacketMaker;
-import ballistickemu.Main;
+import java.util.LinkedHashMap;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import ballistickemu.Main;
+import ballistickemu.Tools.StickPacketMaker;
 
 /**
  *
  * @author Simon
  */
 public class StickClientRegistry {
+	private static final Logger LOGGER = LoggerFactory.getLogger(StickClientRegistry.class);
+	
 	private LinkedHashMap<String, StickClient> Clients;
 	private Boolean isLobby;
 	public ReentrantReadWriteLock ClientsLock = new ReentrantReadWriteLock(true);
@@ -62,7 +68,7 @@ public class StickClientRegistry {
 			} finally {
 				this.ClientsLock.writeLock().unlock();
 			}
-			System.out.println("User " + client.getName() + " being deregistered from main registry.");
+			LOGGER.info("User " + client.getName() + " being deregistered from main registry.");
 			Main.getLobbyServer().BroadcastPacket(StickPacketMaker.Disconnected(client.getUID()));
 		} else if (client.getRoom() != null) {
 			StickRoom room = client.getRoom();
@@ -75,7 +81,7 @@ public class StickClientRegistry {
 							try {
 								Thread.sleep(100);   // Clients don't properly update without waiting somehow
 							} catch (InterruptedException e) {
-								System.out.println("Failed to wait to kick remaining players in a custom map room.");
+								LOGGER.warn("Failed to wait to kick remaining players in a custom map room.");
 							}
 						}
 					}
@@ -87,7 +93,7 @@ public class StickClientRegistry {
 							try {
 								Thread.sleep(100);  // Clients don't properly update without waiting somehow
 							} catch (InterruptedException e) {
-								System.out.println("Failed to wait to kick remaining non-VIP players.");
+								LOGGER.warn("Failed to wait to kick remaining non-VIP players.");
 							}
 						}
 					}

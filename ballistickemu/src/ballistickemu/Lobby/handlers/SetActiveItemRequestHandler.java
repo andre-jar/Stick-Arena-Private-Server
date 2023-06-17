@@ -4,15 +4,21 @@
  */
 
 package ballistickemu.Lobby.handlers;
+import java.sql.PreparedStatement;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import ballistickemu.Tools.DatabaseTools;
 import ballistickemu.Types.StickClient;
 import ballistickemu.Types.StickItem;
-import java.sql.PreparedStatement;
 /**
  *
  * @author Simon
  */
 public class SetActiveItemRequestHandler {
+	private static final Logger LOGGER = LoggerFactory.getLogger(SetActiveItemRequestHandler.class);
+	
     public static void HandlePacket(StickClient client, String packet)
     {
         try
@@ -49,12 +55,12 @@ public class SetActiveItemRequestHandler {
             }
             else
             {
-                System.out.println("Error setting active thingy as it was null or something.");
+                LOGGER.warn("Error setting active item as it was null or something.");
             }
         }
         catch(Exception e)
         {
-            e.printStackTrace();
+            LOGGER.warn("Query exception while setting active item",e);
         }
     }
 }

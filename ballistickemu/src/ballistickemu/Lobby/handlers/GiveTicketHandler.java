@@ -1,20 +1,26 @@
 package ballistickemu.Lobby.handlers;
 
-import ballistickemu.Types.StickClient;
-import ballistickemu.Tools.DatabaseTools;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.Random;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import ballistickemu.Tools.DatabaseTools;
+import ballistickemu.Types.StickClient;
 
 /**
  *
  * @author Michal
  */
 public class GiveTicketHandler {
+	private static final Logger LOGGER = LoggerFactory.getLogger(GiveTicketHandler.class);
+	
 	public static void HandlePacket(StickClient client) {
 		if (1 > client.getTicket()) // dont let anyone spam the cred ticket
 		{
-			System.out.println("WARNING: " + client.getName()
+			LOGGER.warn(client.getName()
 					+ " attempted to collect cred ticket despite not having it available for them");
 		} else {
 			int prize = 0;
@@ -87,7 +93,7 @@ public class GiveTicketHandler {
 				client.setTicket(0);
 			} catch (SQLException e) {
 				client.getAnnounce("There was an error collecting creds ticket, try again later");
-				System.out.println("There was an error accepting cred ticket for a user on database.");
+				LOGGER.warn("There was an error accepting cred ticket for a user on database.");
 			}
 		}
 	}

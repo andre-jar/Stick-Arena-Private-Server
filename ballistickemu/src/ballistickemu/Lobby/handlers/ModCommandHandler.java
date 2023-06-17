@@ -19,24 +19,29 @@
  */
 package ballistickemu.Lobby.handlers;
 
-import ballistickemu.Types.StickClient;
-import ballistickemu.Types.StickRoom;
-import ballistickemu.Types.StickPacket;
-import ballistickemu.Tools.DatabaseTools;
-import ballistickemu.Tools.StickPacketMaker;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Calendar;
 import java.util.StringJoiner;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import ballistickemu.Main;
+import ballistickemu.Tools.DatabaseTools;
+import ballistickemu.Tools.StickPacketMaker;
+import ballistickemu.Types.StickClient;
+import ballistickemu.Types.StickPacket;
+import ballistickemu.Types.StickRoom;
 
 /**
  *
  * @author Simon
  */
 public class ModCommandHandler {
+	private static final Logger LOGGER = LoggerFactory.getLogger(ModCommandHandler.class);
+
 	public static void ProcessModCommand(StickClient client, String ModCommand) {
 		if (client.getUserLevel() < 1) // <=== two bloody important lines of code there :P
 			return;
@@ -53,8 +58,7 @@ public class ModCommandHandler {
 			} else {
 				client.writeMessage("Usage: ::ban username minutes reason");
 			}
-		}
-		else if (ModCommandParsed[0].equalsIgnoreCase("::unban")) {
+		} else if (ModCommandParsed[0].equalsIgnoreCase("::unban")) {
 			PreparedStatement ps;
 			DatabaseTools.lock.lock();
 			try {
@@ -62,12 +66,11 @@ public class ModCommandHandler {
 				ps.setString(1, ModCommandParsed[1]);
 				ps.executeUpdate();
 			} catch (SQLException e) {
-				System.out.println("Exception whilst removing ban: " + e.toString());
+				LOGGER.warn("Exception whilst removing ban: ", e);
 			} finally {
 				DatabaseTools.lock.unlock();
 			}
-		}
-		else if (ModCommandParsed[0].equalsIgnoreCase("::mute")) {
+		} else if (ModCommandParsed[0].equalsIgnoreCase("::mute")) {
 			if (ModCommandParsed.length == 2) {
 				StickClient SC = Main.getLobbyServer().getClientRegistry().getClientfromName(ModCommandParsed[1]);
 				if (SC != null) {
@@ -141,7 +144,7 @@ public class ModCommandHandler {
 				ps.setString(1, ModCommandParsed[1]);
 				ps.executeUpdate();
 			} catch (SQLException e) {
-				System.out.println("Exception whilst removing IP ban: " + e.toString());
+				LOGGER.warn("Exception whilst removing IP ban: ", e);
 			} finally {
 				DatabaseTools.lock.unlock();
 			}
@@ -199,7 +202,7 @@ public class ModCommandHandler {
 		}
 
 		else if (ModCommandParsed[0].equalsIgnoreCase("::killserver")) {
-			System.out.printf("Server terminated at %s by moderator %s", Calendar.getInstance().getTime().toString(),
+			LOGGER.info("Server terminated at {} by moderator {}", Calendar.getInstance().getTime().toString(),
 					client.getName());
 			System.exit(0);
 		}
@@ -276,7 +279,7 @@ public class ModCommandHandler {
 				ps2.setString(6, reason);
 				ps2.executeUpdate();
 			} catch (SQLException e) {
-				System.out.println("Exception during ban command: " + e.toString());
+				LOGGER.warn("Exception during ban command: ", e);
 			} finally {
 				DatabaseTools.lock.unlock();
 			}
@@ -294,8 +297,8 @@ public class ModCommandHandler {
 					rs4.next();
 					IP = rs4.getString("ip");
 				}
-				if(IP==null || IP.isEmpty()) {
-					System.out.println("No IP for User " +playerName + " could be found.");
+				if (IP == null || IP.isEmpty()) {
+					LOGGER.info("No IP for User " + playerName + " could be found.");
 					return -1;
 				}
 				PreparedStatement ps5 = DatabaseTools.getDbConnection().prepareStatement(
@@ -316,7 +319,7 @@ public class ModCommandHandler {
 					}
 				}
 			} catch (SQLException e) {
-				System.out.println("Exception during ban command: " + e.toString());
+				LOGGER.warn("Exception during ban command: ", e);
 			}
 		}
 		return banResult;

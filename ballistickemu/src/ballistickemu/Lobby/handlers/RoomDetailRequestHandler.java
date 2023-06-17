@@ -18,34 +18,35 @@
  *     the Free Software Foundation, Inc., 59 Temple Place,
  */
 package ballistickemu.Lobby.handlers;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import ballistickemu.Main;
-import ballistickemu.Types.StickClient;
-import ballistickemu.Types.StickRoom;
-import ballistickemu.Types.StickPacket;
 import ballistickemu.Tools.StickPacketMaker;
+import ballistickemu.Types.StickClient;
+import ballistickemu.Types.StickPacket;
+import ballistickemu.Types.StickRoom;
+
 /**
  *
  * @author Simon
  */
 public class RoomDetailRequestHandler {
-public static void HandlePacket(StickClient client, String Packet)
-{
-    StickRoom Room;
-        try
-        {
-            String RoomName = Packet.substring(2, Packet.length()).replaceAll("\0", "");
-            Room = Main.getLobbyServer().getRoomRegistry().GetRoomFromName(RoomName);
-            if (Room != null)
-            {
-                StickPacket response = StickPacketMaker.getSendRoundDetail(Room.getMapID(), Room.getCycleMode(), Room.GetCR().getAllClients().size(), Room.getCurrentRoundTime());
-                client.write(response);
-            }
-        }
-        catch (Exception e)
-        {
-            System.out.println("Exception parsing RoomDetailRequest packet");
-            System.out.println(e.toString());
+	private static final Logger LOGGER = LoggerFactory.getLogger(RoomDetailRequestHandler.class);
 
-        }
-    }
+	public static void HandlePacket(StickClient client, String Packet) {
+		StickRoom Room;
+		try {
+			String RoomName = Packet.substring(2, Packet.length()).replaceAll("\0", "");
+			Room = Main.getLobbyServer().getRoomRegistry().GetRoomFromName(RoomName);
+			if (Room != null) {
+				StickPacket response = StickPacketMaker.getSendRoundDetail(Room.getMapID(), Room.getCycleMode(),
+						Room.GetCR().getAllClients().size(), Room.getCurrentRoundTime());
+				client.write(response);
+			}
+		} catch (Exception e) {
+			LOGGER.warn("Exception parsing RoomDetailRequest packet: ", e);
+		}
+	}
 }

@@ -22,27 +22,30 @@ package ballistickemu.Tools;
 import java.util.Calendar;
 import java.util.TimeZone;
 
-import ballistickemu.Main;
-import ballistickemu.Types.StickClient;
-import ballistickemu.Lobby.PacketHandlerLobby;
-import ballistickemu.Game.PacketHandlerGame;
-
-import org.apache.mina.core.session.IdleStatus;
 import org.apache.mina.core.service.IoHandlerAdapter;
+import org.apache.mina.core.session.IdleStatus;
 import org.apache.mina.core.session.IoSession;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import ballistickemu.Main;
+import ballistickemu.Game.PacketHandlerGame;
+import ballistickemu.Lobby.PacketHandlerLobby;
+import ballistickemu.Types.StickClient;
 
 public class StickNetworkHandler extends IoHandlerAdapter {
+	private static final Logger LOGGER = LoggerFactory.getLogger(StickNetworkHandler.class);
+
 	public StickNetworkHandler() {
 	}
 
 	@Override
 	public void sessionOpened(IoSession session) throws Exception {
 		int rowCount = -1;
-		System.out.printf("IoSession with %s opened at %s", session.getRemoteAddress(),
+		LOGGER.info("IoSession with {} opened at {}", session.getRemoteAddress(),
 				Calendar.getInstance(TimeZone.getDefault()).getTime().toString());
 		if (session.getRemoteAddress() == null)
 			return;
-		System.out.println();
 		if (rowCount > 0) {
 			session.close(false);
 			return;

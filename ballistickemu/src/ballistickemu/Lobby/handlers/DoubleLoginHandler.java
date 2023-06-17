@@ -1,13 +1,15 @@
 package ballistickemu.Lobby.handlers;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import ballistickemu.Types.StickClient;
 
+public class DoubleLoginHandler {
+	private static final Logger LOGGER = LoggerFactory.getLogger(DoubleLoginHandler.class);
 
-public class DoubleLoginHandler
-{
-  public static void HandlePacket(StickClient client)
-  {
-      System.out.println("Secondary login");
-      client.getSecondaryLoginPacket();
-  }
+	public static void HandlePacket(StickClient client) {
+		LOGGER.info("Secondary login");
+		client.getSecondaryLoginPacket();
+	}
 }

@@ -18,80 +18,79 @@
  *     the Free Software Foundation, Inc., 59 Temple Place,
  */
 package ballistickemu.Lobby.handlers;
+
+import java.util.LinkedHashMap;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import ballistickemu.Main;
-import ballistickemu.Types.StickClient;
-import ballistickemu.Types.StickRoom;
 import ballistickemu.Tools.StickPacketMaker;
 import ballistickemu.Tools.StringTool;
-import java.util.LinkedHashMap;
+import ballistickemu.Types.StickClient;
+import ballistickemu.Types.StickRoom;
 
 /**
  *
  * @author Simon
  */
 public class CreateRoomHandler {
-        public static void HandlePacket(StickClient client, String Packet)
-        {
-            try
-            {
+	private static final Logger LOGGER = LoggerFactory.getLogger(CreateRoomHandler.class);
 
-                String RoomData = "";
-                String[] VIPList = new String[0];
-                Boolean IsLabPass = false;
-                if(Packet.indexOf(";", 0) > 0)
-                {
-                    RoomData = StringTool.GetStringBetween(Packet, ";");
-                    VIPList = StringTool.GetStringBetween(Packet, ";", "\0").split(";");
-                    IsLabPass = true;
+	public static void HandlePacket(StickClient client, String Packet) {
+		try {
 
-                } else {
-                    RoomData = Packet;
-                }
-                String mapID = RoomData.substring(2, 3);
-                int cycleMode = Integer.parseInt(RoomData.substring(3, 4));
-                Boolean isPrivate = (RoomData.substring(4, 5).equalsIgnoreCase("1"));
-                Boolean requiresLabPass = (RoomData.substring(5, 6).equalsIgnoreCase("1"));
-                String RoomName = RoomData.substring(6).replace("\0", "");
+			String RoomData = "";
+			String[] VIPList = new String[0];
+			Boolean IsLabPass = false;
+			if (Packet.indexOf(";", 0) > 0) {
+				RoomData = StringTool.GetStringBetween(Packet, ";");
+				VIPList = StringTool.GetStringBetween(Packet, ";", "\0").split(";");
+				IsLabPass = true;
 
-                LinkedHashMap<String, StickClient> VIPMap = new LinkedHashMap<String, StickClient>();
+			} else {
+				RoomData = Packet;
+			}
+			String mapID = RoomData.substring(2, 3);
+			int cycleMode = Integer.parseInt(RoomData.substring(3, 4));
+			Boolean isPrivate = (RoomData.substring(4, 5).equalsIgnoreCase("1"));
+			Boolean requiresLabPass = (RoomData.substring(5, 6).equalsIgnoreCase("1"));
+			String RoomName = RoomData.substring(6).replace("\0", "");
 
-                if((IsLabPass) && (VIPList.length > 0))
-                {
-                    for(String s : VIPList)
-                    {
-                        if(VIPList.length > 0)
-                        {
-    						StickClient vipClient = Main.getLobbyServer().getClientRegistry().getClientfromName(s);
-    						if (vipClient != null)
-    							VIPMap.put(s, vipClient);
-                        }
-                    }
-                }
+			LinkedHashMap<String, StickClient> VIPMap = new LinkedHashMap<String, StickClient>();
 
-             //   System.out.println(Packet);
-               // System.out.println("Room made with properties: " + mapID + cycleMode + isPrivate + RoomName);
-                if(client.getName() == null) //TODO: quickplay char generation here
-                    client.setUpAsQuickplay();
-                else
-                    client.setQuickplayStatus(false);
+			if ((IsLabPass) && (VIPList.length > 0)) {
+				for (String s : VIPList) {
+					if (VIPList.length > 0) {
+						StickClient vipClient = Main.getLobbyServer().getClientRegistry().getClientfromName(s);
+						if (vipClient != null)
+							VIPMap.put(s, vipClient);
+					}
+				}
+			}
 
-                StickRoom newRoom = new StickRoom(RoomName, mapID, cycleMode, isPrivate, VIPMap, requiresLabPass, client.getName());
+			// System.out.println(Packet);
+			// System.out.println("Room made with properties: " + mapID + cycleMode +
+			// isPrivate + RoomName);
+			if (client.getName() == null) // TODO: quickplay char generation here
+				client.setUpAsQuickplay();
+			else
+				client.setQuickplayStatus(false);
 
+			StickRoom newRoom = new StickRoom(RoomName, mapID, cycleMode, isPrivate, VIPMap, requiresLabPass,
+					client.getName());
 
-                Main.getLobbyServer().getRoomRegistry().RegisterRoom(newRoom);
-                newRoom.GetCR().registerClient(client);
-                newRoom.getTotalJoinedClients().add(client.getName());
-                client.setRoom(newRoom);
-                client.setLobbyStatus(false);
-                Main.getLobbyServer().BroadcastPacket(StickPacketMaker.Disconnected(client.getUID()));
-                client.setRequiresUpdate(true);
-                client.write(StickPacketMaker.getNewPlayerUID(client.getUID()));
+			Main.getLobbyServer().getRoomRegistry().RegisterRoom(newRoom);
+			newRoom.GetCR().registerClient(client);
+			newRoom.getTotalJoinedClients().add(client.getName());
+			client.setRoom(newRoom);
+			client.setLobbyStatus(false);
+			Main.getLobbyServer().BroadcastPacket(StickPacketMaker.Disconnected(client.getUID()));
+			client.setRequiresUpdate(true);
+			client.write(StickPacketMaker.getNewPlayerUID(client.getUID()));
 
-            }
-            catch(Exception e)
-            {
-                System.out.println("Exception parsing create room packet. Packet: " + Packet);
-                e.printStackTrace();
-            }
-        }
+		} catch (Exception e) {
+			LOGGER.warn("Exception parsing create room packet. Packet: " + Packet, e);
+		}
+	}
 }

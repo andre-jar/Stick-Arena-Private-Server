@@ -19,15 +19,38 @@
  */
 package ballistickemu.Lobby;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import ballistickemu.Lobby.handlers.BuyItemRequestHandler;
+import ballistickemu.Lobby.handlers.CheckCapacityHandler;
+import ballistickemu.Lobby.handlers.CreateRoomHandler;
+import ballistickemu.Lobby.handlers.FindRequestHandler;
+import ballistickemu.Lobby.handlers.GeneralChatHandler;
+import ballistickemu.Lobby.handlers.GenericSendDataHandler;
+import ballistickemu.Lobby.handlers.GiveTicketHandler;
+import ballistickemu.Lobby.handlers.InventoryRequestHandler;
+import ballistickemu.Lobby.handlers.LoginHandler;
+import ballistickemu.Lobby.handlers.MapCycleRequestHandler;
+import ballistickemu.Lobby.handlers.ModBanHandler;
+import ballistickemu.Lobby.handlers.ModBanNameHandler;
+import ballistickemu.Lobby.handlers.ModGlobalHandler;
+import ballistickemu.Lobby.handlers.ModKillRoomHandler;
+import ballistickemu.Lobby.handlers.ModRequestIPHandler;
+import ballistickemu.Lobby.handlers.ModWarnHandler;
+import ballistickemu.Lobby.handlers.NewClientHandler;
+import ballistickemu.Lobby.handlers.RoomDetailRequestHandler;
+import ballistickemu.Lobby.handlers.RoomRequestHandler;
+import ballistickemu.Lobby.handlers.SetActiveItemRequestHandler;
 import ballistickemu.Types.StickClient;
-import ballistickemu.Lobby.handlers.*;
 
 /**
  *
  * @author Simon
  */
 public class PacketHandlerLobby {
-
+	private static final Logger LOGGER = LoggerFactory.getLogger(PacketHandlerLobby.class);
+	
 	public static void HandlePacket(String Packet, StickClient client)
 	// public static object HandlePacket(object state)
 	{
@@ -125,7 +148,7 @@ public class PacketHandlerLobby {
 		} else {
 			// Console.WriteLine("Unhandled packet from " +
 			// client.getClient().Client.RemoteEndPoint + ":");
-			System.out.printf("Unhandled packet received by LobbyPacketHandler: %s", Packet);
+			LOGGER.warn("Unhandled packet received by LobbyPacketHandler: {}", Packet);
 			// return;
 		}
 

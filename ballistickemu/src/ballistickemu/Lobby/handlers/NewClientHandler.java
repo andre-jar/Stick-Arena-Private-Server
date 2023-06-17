@@ -19,17 +19,22 @@
  */
 package ballistickemu.Lobby.handlers;
 
-import ballistickemu.Types.StickClient;
-import ballistickemu.Types.StickRoom;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import ballistickemu.Main;
 import ballistickemu.Tools.StickPacketMaker;
 import ballistickemu.Tools.StringTool;
+import ballistickemu.Types.StickClient;
+import ballistickemu.Types.StickRoom;
 
 /**
  *
  * @author Simon
  */
 public class NewClientHandler {
+	private static final Logger LOGGER = LoggerFactory.getLogger(NewClientHandler.class);
+
 	public static void HandlePacket(StickClient client, String Packet) {
 		if (Packet.substring(0, 3).equalsIgnoreCase("03_")) {
 			if ((client.getQuickplayStatus()) || (client.getName() == null)) // no QP chars in lobby thanks
@@ -120,8 +125,7 @@ public class NewClientHandler {
 			} catch (Exception e) {
 				client.setLobbyStatus(true);
 				Main.getLobbyServer().getRoomRegistry().GetRoomFromName(RoomName).GetCR().deregisterClient(client);
-				System.out.println("Exception when parsing join room packet: " + e.toString());
-				e.printStackTrace();
+				LOGGER.warn("Exception when parsing join room packet: ", e);
 			}
 		}
 

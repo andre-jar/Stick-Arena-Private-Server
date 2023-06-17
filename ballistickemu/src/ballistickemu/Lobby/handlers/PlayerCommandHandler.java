@@ -9,6 +9,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import ballistickemu.Main;
 import ballistickemu.Tools.DatabaseTools;
 import ballistickemu.Tools.StickPacketMaker;
@@ -22,6 +25,8 @@ import ballistickemu.Types.StickItem;
  * @author Simon
  */
 public class PlayerCommandHandler {
+	private static final Logger LOGGER = LoggerFactory.getLogger(PlayerCommandHandler.class);
+
 	public static void HandlePacket(StickClient client, String CommandStr) // so for example CommandStr would be
 																			// "!setcolor 255 255 255 255 255 255"
 	{
@@ -59,7 +64,7 @@ public class PlayerCommandHandler {
 			addSpinner(client, getArgs(CommandStr, "!modspinner"), 183);
 			return;
 		}
-		if (C_Splitted[0].equalsIgnoreCase("!setkills") && C_Splitted.length > 1  && client.getModStatus()) {
+		if (C_Splitted[0].equalsIgnoreCase("!setkills") && C_Splitted.length > 1 && client.getModStatus()) {
 			setKills(client, C_Splitted[1]);
 		}
 	}
@@ -127,11 +132,10 @@ public class PlayerCommandHandler {
 				}
 				updatePlayer(client);
 			} else {
-				client.writeCallbackMessage("Updating color failed.");
+				LOGGER.warn("Updating color failed.");
 			}
 		} catch (SQLException e) {
-			System.out.println(
-					"Exception changing colour of user " + client.getName() + ". Exception thrown: " + e.toString());
+			LOGGER.warn("Exception changing colour of user " + client.getName() + ". Exception thrown: ", e);
 		}
 
 	}
@@ -203,8 +207,7 @@ public class PlayerCommandHandler {
 				client.writeCallbackMessage("Updating color failed.");
 			}
 		} catch (SQLException e) {
-			System.out.println(
-					"Exception changing colour of user " + client.getName() + ". Exception thrown: " + e.toString());
+			LOGGER.warn("Exception changing colour of user " + client.getName() + ". Exception thrown: ", e);
 		}
 
 	}
@@ -277,7 +280,7 @@ public class PlayerCommandHandler {
 			ps.setInt(2, client.getDbID());
 			ps.executeUpdate();
 		} catch (SQLException e) {
-			System.out.println("Error setting kills; something went wrong with the DB query.");
+			LOGGER.warn("Error setting kills; something went wrong with the DB query.");
 			return;
 		}
 

@@ -19,25 +19,29 @@
  */
 package ballistickemu.Types;
 
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Set;
-import java.util.LinkedHashMap;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import ballistickemu.Main;
 import ballistickemu.Lobby.handlers.PlayerCommandHandler;
 import ballistickemu.Tools.DatabaseTools;
 import ballistickemu.Tools.StickPacketMaker;
-
-import java.util.concurrent.locks.ReentrantReadWriteLock;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
 
 /**
  *
  * @author Simon
  */
 public class StickRoom {
+	private static final Logger LOGGER = LoggerFactory.getLogger(StickRoom.class);
 	private StickClientRegistry CR;
 	private String Name;
 	private String MapID;
@@ -270,13 +274,13 @@ public class StickRoom {
 					ps.setString(1, s);
 					ps.executeUpdate();
 					StickClient c = Main.getLobbyServer().getClientRegistry().getClientfromName(s);
-					if(c!=null) {
+					if (c != null) {
 						c.incrementRounds();
 						PlayerCommandHandler.updatePlayer(c);
 					}
 				}
 			} catch (SQLException e) {
-				System.out.println("Problem updating user rounds stat.");
+				LOGGER.warn("Problem updating user rounds stat.");
 			}
 
 		}
@@ -304,7 +308,7 @@ public class StickRoom {
 				CR.ClientsLock.readLock().unlock();
 			}
 			if (tempWinner == null) {
-				System.out.println("Winner was null - setting winner as blank client");
+				LOGGER.info("Winner was null - setting winner as blank client");
 				return new StickClient();
 			}
 			tempWinner.incrementGameWins();
@@ -334,7 +338,7 @@ public class StickRoom {
 						}
 
 					} catch (Exception e) {
-						System.out.println("There was an error updating winner status for user " + c.getName());
+						LOGGER.warn("There was an error updating winner status for user " + c.getName());
 					}
 				}
 				for (StickClient w : winners) {
@@ -371,10 +375,10 @@ public class StickRoom {
 						ps.setInt(5, c.getDbID());
 						ps.executeUpdate();
 
-						System.out.println("Updated stats for user: " + c.getName());
+						LOGGER.info("Updated stats for user: " + c.getName());
 
 					} catch (Exception e) {
-						System.out.println("There was an error updating round stats for user " + c.getName());
+						LOGGER.warn("There was an error updating round stats for user " + c.getName());
 						System.out.println(e);
 					}
 				}
@@ -386,7 +390,7 @@ public class StickRoom {
 						c.setGameKills(0);
 						c.setGameDeaths(0);
 					} catch (Exception e) {
-						System.out.println("There was an error resetting everybodys game stats");
+						LOGGER.warn("There was an error resetting everybodys game stats");
 					}
 				}
 
@@ -395,7 +399,7 @@ public class StickRoom {
 			}
 		}
 	}
-	
+
 	public boolean isFull(StickClient client) {
 		int numPlayers = this.CR.getAllClients().size();
 		if (client.getPass() || getNeedsPass()) {
@@ -409,9 +413,8 @@ public class StickRoom {
 		}
 		return false;
 	}
-	
-	public boolean usesCustomMap()
-	{
-		return (MapID.charAt(0)>=86 && MapID.charAt(0)<=90);
+
+	public boolean usesCustomMap() {
+		return (MapID.charAt(0) >= 86 && MapID.charAt(0) <= 90);
 	}
 }

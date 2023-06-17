@@ -1,13 +1,18 @@
 package ballistickemu.Types;
 
-import ballistickemu.Tools.DatabaseTools;
-
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.LinkedHashMap;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import ballistickemu.Tools.DatabaseTools;
+
 public class StickShop {
+	private static final Logger LOGGER = LoggerFactory.getLogger(StickShop.class);
+
 	private LinkedHashMap<Integer, Integer> ShopList;
 
 	public StickShop() {
@@ -39,7 +44,7 @@ public class StickShop {
 					}
 				}
 			} catch (SQLException e) {
-				System.out.println("There was a problem buying a map slot.");
+				LOGGER.warn("There was a problem buying a map slot.");
 			}
 		}
 

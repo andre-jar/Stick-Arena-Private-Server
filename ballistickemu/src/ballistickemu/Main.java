@@ -1,22 +1,24 @@
 package ballistickemu;
  
-import java.util.Properties;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.nio.charset.Charset;
 import java.net.InetSocketAddress;
- 
-import ballistickemu.Tools.StickNetworkHandler;
-import ballistickemu.Lobby.LobbyServer;
-import ballistickemu.Tools.DatabaseTools;
-import ballistickemu.Tools.QuickplayTool;
+import java.nio.charset.Charset;
+import java.util.Properties;
 
 import org.apache.mina.core.session.IdleStatus;
 import org.apache.mina.filter.codec.ProtocolCodecFilter;
 import org.apache.mina.filter.codec.textline.TextLineCodecFactory;
-import org.apache.mina.transport.socket.nio.NioSocketAcceptor;
 import org.apache.mina.filter.executor.ExecutorFilter;
+import org.apache.mina.transport.socket.nio.NioSocketAcceptor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import ballistickemu.Lobby.LobbyServer;
+import ballistickemu.Tools.DatabaseTools;
+import ballistickemu.Tools.QuickplayTool;
+import ballistickemu.Tools.StickNetworkHandler;
  
 /**
  *
@@ -27,12 +29,13 @@ public class Main {
     private static int PORT = 1138;
     public static int maxPlayers = 100; // 100 default, but configureable via props
     private static LobbyServer LS;
+	private static final Logger LOGGER = LoggerFactory.getLogger(Main.class);
  
     /**
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        System.out.println("Welcome to BallistickEMU - Improved by andre_jar");
+        LOGGER.info("Welcome to BallistickEMU - Improved by andre_jar");
         NioSocketAcceptor SocketAcceptor = new NioSocketAcceptor();
         SocketAcceptor.getSessionConfig().setIdleTime( IdleStatus.BOTH_IDLE, 10 );
         SocketAcceptor.getSessionConfig().setReadBufferSize( 2048 );
@@ -47,11 +50,11 @@ public class Main {
         ConfigProps.load(new FileInputStream("config.properties"));
         } catch (FileNotFoundException fnf)
         {
-            System.out.println("Unable to start server: config.properties was not found.");
+            LOGGER.error("Unable to start server: config.properties was not found.");
             return;
         } catch (IOException e)
         {
-            System.out.println("Unable to start server: Error reading from config.properties.");
+            LOGGER.error("Unable to start server: Error reading from config.properties.");
             return;
         }
  
@@ -67,13 +70,13 @@ public class Main {
  
         if (!LS.getShop().PopulateShop())
         {
-            System.out.println("There was an error reading shop info from the database.");
+            LOGGER.error("There was an error reading shop info from the database.");
             return;
         }
  
         if (!QuickplayTool.PopulateNameList())
         {
-            System.out.println("There was an error reading quickplay names from the database.");
+            LOGGER.error("There was an error reading quickplay names from the database.");
             return;
         }
  
@@ -81,14 +84,12 @@ public class Main {
         {
             SocketAcceptor.bind(new InetSocketAddress(PORT));
  
-            System.out.printf("Server started on port %s \n", PORT);
-            System.out.println();
+            LOGGER.info("Server started on port {} \n", PORT);
         }
  
         catch (IOException e)
         {
-            System.out.printf("Unable to bind to port %s, Exception thrown: %s \n", PORT, e);
-            System.out.println();
+            LOGGER.error("Unable to bind to port {}, Exception thrown: {} \n", PORT, e);
         }
     }
  

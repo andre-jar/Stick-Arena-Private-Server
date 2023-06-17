@@ -5,26 +5,31 @@
 
 package ballistickemu.Lobby.handlers;
 
+import java.math.BigDecimal;
+import java.security.NoSuchAlgorithmException;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import ballistickemu.Main;
+import ballistickemu.Tools.DatabaseTools;
+import ballistickemu.Tools.PasswordHasher;
+import ballistickemu.Tools.StickPacketMaker;
+import ballistickemu.Tools.StringTool;
 import ballistickemu.Types.StickClient;
 import ballistickemu.Types.StickColour;
 import ballistickemu.Types.StickItem;
-import ballistickemu.Tools.DatabaseTools;
-import ballistickemu.Tools.StickPacketMaker;
-import ballistickemu.Tools.StringTool;
-import ballistickemu.Tools.PasswordHasher;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import ballistickemu.Main;
-
-import java.math.BigDecimal;
-import java.security.NoSuchAlgorithmException;
-import java.sql.SQLException;
 
 /**
  *
  * @author Simon
  */
 public class LoginHandler {
+	private static final Logger LOGGER = LoggerFactory.getLogger(LoginHandler.class);
+
 	public static void HandlePacket(StickClient client, String packet) {
 		// ip banning:
 		DatabaseTools.lock.lock();
@@ -48,7 +53,7 @@ public class LoginHandler {
 					}
 				}
 			} catch (SQLException e) {
-				System.out.println("Exception checking IP ban tables: " + e.toString());
+				LOGGER.warn("Exception checking IP ban tables: ", e);
 			}
 		} finally {
 			DatabaseTools.lock.unlock();
@@ -255,7 +260,7 @@ public class LoginHandler {
 			client.setIsReal(true);
 
 		} catch (SQLException e) {
-			System.out.println("Exception at login: + " + e.toString());
+			LOGGER.warn("Exception at login: + ", e);
 		}
 	}
 
@@ -270,7 +275,7 @@ public class LoginHandler {
 			ps1.setInt(3, dbID);
 			ps1.executeUpdate();
 		} catch (SQLException e) {
-			System.out.println("Error while update last login date for ID: " + dbID);
+			LOGGER.warn("Error while update last login date for ID: " + dbID);
 		}
 	}
 }

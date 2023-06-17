@@ -5,25 +5,31 @@
 
 package ballistickemu.Lobby.handlers;
 
-import ballistickemu.Tools.DatabaseTools;
-import ballistickemu.Types.StickClient;
-import ballistickemu.Types.StickItem;
-import ballistickemu.Types.StickColour;
-import ballistickemu.Tools.ItemType;
-import ballistickemu.Main;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import ballistickemu.Main;
+import ballistickemu.Tools.DatabaseTools;
+import ballistickemu.Tools.ItemType;
+import ballistickemu.Types.StickClient;
+import ballistickemu.Types.StickColour;
+import ballistickemu.Types.StickItem;
 
 /**
  *
  * @author Simon
  */
 public class BuyItemRequestHandler {
+	private static final Logger LOGGER = LoggerFactory.getLogger(BuyItemRequestHandler.class);
+
 	public static void HandlePacket(StickClient client, String packet) { // 0b999123123123456456456.
 		if (packet.length() < 24) {
-			System.out.println("Invalid buy item packet length received. Packet length: " + packet.length()
-					+ ", Packet data: " + packet);
+			LOGGER.info("Invalid buy item packet length received. Packet length: " + packet.length() + ", Packet data: "
+					+ packet);
 			return;
 		}
 		int ItemID = Integer.parseInt(packet.substring(2, 5));
@@ -41,14 +47,13 @@ public class BuyItemRequestHandler {
 		// some price checking stuff now
 		if (price == -1) // ie, non-existant item
 		{
-			System.out.println(
-					"WARNING: " + client.getName() + " attempted to buy non-existant item with ID " + ItemID + ".");
+			LOGGER.warn(client.getName() + " attempted to buy non-existant item with ID " + ItemID + ".");
 			return;
 		}
 
 		if (price > client.getCash()) // trying to purchase something you can't afford, i see!
 		{
-			System.out.println("WARNING: " + client.getName() + " attempted to buy item costing more than held cash.");
+			LOGGER.warn(client.getName() + " attempted to buy item costing more than held cash.");
 			client.getIoSession().close(true);
 			return;
 		}
@@ -76,7 +81,7 @@ public class BuyItemRequestHandler {
 			ps2.executeUpdate();
 
 		} catch (SQLException e) {
-			System.out.println("There was an error updating the database with a new item.");
+			LOGGER.warn("There was an error updating the database with a new item.");
 		}
 		// int _ItemID, int _dbID, int _userDBID, int itemType, Boolean _selected,
 		// StickColour _colour
@@ -91,14 +96,13 @@ public class BuyItemRequestHandler {
 					itemDBID = result.getInt("max");
 				}
 			} catch (SQLException e) {
-				System.out.println("There was an error retrieving correct item number for item");
+				LOGGER.warn("There was an error retrieving correct item number for item");
 			}
 			client.addItemToInventory(itemDBID,
 					new StickItem(ItemID, itemDBID, client.getDbID(), iType, false, newColour));
 			client.setCash(client.getCash() - price);
 		} else {
-			System.out.println(
-					"There was an error in updating the database with a new item - item DBID was returned as -1.");
+			LOGGER.warn("There was an error in updating the database with a new item - item DBID was returned as -1.");
 		}
 	}
 }
