@@ -18,43 +18,57 @@
  *     the Free Software Foundation, Inc., 59 Temple Place,
  */
 package ballistickemu.Lobby.handlers;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import ballistickemu.Main;
-import ballistickemu.Types.StickClient;
 import ballistickemu.Tools.StickPacketMaker;
+import ballistickemu.Types.StickClient;
 
 /**
  *
  * @author Simon
  */
 public class GeneralChatHandler {
-    public static void HandlePacket(StickClient client, String Packet)
-    {
-        if (client != null)
-        {
-            if(Packet.substring(1).startsWith("!"))
-            {
-                PlayerCommandHandler.HandlePacket(client, Packet.substring(1));
-                return;
-            }
+	private static final Logger LOGGER = LoggerFactory.getLogger(GeneralChatHandler.class);
 
-            if(Packet.substring(1, 3).equalsIgnoreCase("::"))
-            {
-                ModCommandHandler.ProcessModCommand(client, Packet.substring(1).replaceAll("\0", ""));
-                return;
-            }
+	public static void HandlePacket(StickClient client, String Packet) {
+		if (client != null) {
+			if (Packet.substring(1).startsWith("!")) {
+				if (Main.isChatLogEnabled()) {
+					LOGGER.info("Player {} issued command {}", client.getName(), Packet.substring(1));
+				}
+				PlayerCommandHandler.HandlePacket(client, Packet.substring(1));
+				return;
+			}
 
-            if(client.getMuteStatus())
-            {
-                client.writeCallbackMessage("SERVER MESSAGE: Unable to send chat message as you have been muted.");
-                return;
-            }
-            String UIDFrom = client.getUID();
-            String Text = Packet.substring(1);
-            if (client.getLobbyStatus())
-                Main.getLobbyServer().BroadcastPacket(StickPacketMaker.GeneralChat(UIDFrom, Text));
-            else
-                client.getRoom().BroadcastToRoom(StickPacketMaker.GeneralChat(UIDFrom, Text));
-        }
+			if (Packet.substring(1, 3).equalsIgnoreCase("::")) {
+				if (Main.isChatLogEnabled()) {
+					LOGGER.info("Player {} issued command {}", client.getName(), Packet.substring(1));
+				}
+				ModCommandHandler.ProcessModCommand(client, Packet.substring(1).replaceAll("\0", ""));
+				return;
+			}
 
-    }
+			if (client.getMuteStatus()) {
+				client.writeCallbackMessage("SERVER MESSAGE: Unable to send chat message as you have been muted.");
+				return;
+			}
+			String UIDFrom = client.getUID();
+			String Text = Packet.substring(1);
+			if (client.getLobbyStatus()) {
+				if (Main.isChatLogEnabled()) {
+					if (client.getModStatus()) {
+						LOGGER.info("<<{}>> {}", client.getName(), Text);
+					} else {
+						LOGGER.info("<{}> {}", client.getName(), Text);
+					}
+				}
+				Main.getLobbyServer().BroadcastPacket(StickPacketMaker.GeneralChat(UIDFrom, Text));
+			} else
+				client.getRoom().BroadcastToRoom(StickPacketMaker.GeneralChat(UIDFrom, Text));
+		}
+
+	}
 }

@@ -18,6 +18,9 @@
  *     the Free Software Foundation, Inc., 59 Temple Place,
  */
 package ballistickemu.Lobby.handlers;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import ballistickemu.Main;
 import ballistickemu.Tools.StickPacketMaker;
 import ballistickemu.Types.StickClient;
@@ -26,11 +29,24 @@ import ballistickemu.Types.StickClient;
  * @author Simon
  */
 public class GenericSendDataHandler {
+	private static final Logger LOGGER = LoggerFactory.getLogger(GenericSendDataHandler.class);
+	
     public static void HandlePacket(StickClient client, String Packet)
     {
         if (Packet.length() < 5) { return; }
         String ToUID = Packet.substring(2, 5);
-
+        if (Main.isChatLogEnabled()) 
+        {
+        	String ID = Packet.substring(5, 6);
+			if ("P".equals(ID)) {
+				String fromName = client.getName();
+				String toName = Main.getLobbyServer().getClientRegistry().getClientfromUID(ToUID).getName();
+				String msg = "[" + fromName + "->" + toName + "]: " + Packet.substring(6);
+				if (Main.isChatLogEnabled()) {
+					LOGGER.info(msg);
+				}
+			}
+        }
         Main.getLobbyServer().sendToUID(ToUID, StickPacketMaker.GenericSendPacket(client.getUID(), Packet.substring(5)));
 
     }

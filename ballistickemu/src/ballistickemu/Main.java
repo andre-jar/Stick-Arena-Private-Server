@@ -30,22 +30,13 @@ public class Main {
     public static int maxPlayers = 100; // 100 default, but configureable via props
     private static LobbyServer LS;
 	private static final Logger LOGGER = LoggerFactory.getLogger(Main.class);
+	private static boolean chatLogEnabled = false;	
  
     /**
      * @param args the command line arguments
      */
-    public static void main(String[] args) {
-        LOGGER.info("Welcome to BallistickEMU - Improved by andre_jar");
-        NioSocketAcceptor SocketAcceptor = new NioSocketAcceptor();
-        SocketAcceptor.getSessionConfig().setIdleTime( IdleStatus.BOTH_IDLE, 10 );
-        SocketAcceptor.getSessionConfig().setReadBufferSize( 2048 );
-        SocketAcceptor.setHandler(new StickNetworkHandler());
-        ExecutorFilter executor = new ExecutorFilter();
-        SocketAcceptor.getFilterChain().addLast( "codec", new ProtocolCodecFilter( new TextLineCodecFactory( Charset.forName( "UTF-8" ), "\0", "\0")));
-        SocketAcceptor.getFilterChain().addLast("threadPool", executor);
-        LS = new LobbyServer();
- 
-        Properties ConfigProps = new Properties();
+    public static void main(String[] args) { 
+    	Properties ConfigProps = new Properties();
         try {
         ConfigProps.load(new FileInputStream("config.properties"));
         } catch (FileNotFoundException fnf)
@@ -57,6 +48,20 @@ public class Main {
             LOGGER.error("Unable to start server: Error reading from config.properties.");
             return;
         }
+		if ("true".equalsIgnoreCase(ConfigProps.getProperty("logchat"))) {
+			chatLogEnabled = true;
+		}
+        LOGGER.info("Welcome to BallistickEMU - Improved by andre_jar");
+        NioSocketAcceptor SocketAcceptor = new NioSocketAcceptor();
+        SocketAcceptor.getSessionConfig().setIdleTime( IdleStatus.BOTH_IDLE, 10 );
+        SocketAcceptor.getSessionConfig().setReadBufferSize( 2048 );
+        SocketAcceptor.setHandler(new StickNetworkHandler());
+        ExecutorFilter executor = new ExecutorFilter();
+        SocketAcceptor.getFilterChain().addLast( "codec", new ProtocolCodecFilter( new TextLineCodecFactory( Charset.forName( "UTF-8" ), "\0", "\0")));
+        SocketAcceptor.getFilterChain().addLast("threadPool", executor);
+        LS = new LobbyServer();
+ 
+       
  
         Main.IP = ConfigProps.getProperty("server_IP");
         Main.PORT = Integer.parseInt(ConfigProps.getProperty("server_Port"));
@@ -92,6 +97,10 @@ public class Main {
             LOGGER.error("Unable to bind to port {}, Exception thrown: {} \n", PORT, e);
         }
     }
+    
+	public static boolean isChatLogEnabled() {
+		return chatLogEnabled;
+	}
  
     public static LobbyServer getLobbyServer()
     {
