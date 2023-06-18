@@ -19,6 +19,7 @@ import ballistickemu.Tools.StringTool;
 import ballistickemu.Types.StickClient;
 import ballistickemu.Types.StickColour;
 import ballistickemu.Types.StickItem;
+import ballistickemu.Types.StickRoom;
 
 /**
  *
@@ -66,6 +67,42 @@ public class PlayerCommandHandler {
 		}
 		if (C_Splitted[0].equalsIgnoreCase("!setkills") && C_Splitted.length > 1 && client.getModStatus()) {
 			setKills(client, C_Splitted[1]);
+		}
+		if ((C_Splitted[0].equalsIgnoreCase("!showgames"))) {
+			client.writeCallbackMessage("List of Rooms:");
+			for (StickRoom room : Main.getLobbyServer().getRoomRegistry().GetAllRooms()) {
+				if(room.getPrivacy()) {
+					if(client.getModStatus()) {
+						client.writeCallbackMessage(room.getName() +" (private)");
+					}
+				} else {
+					client.writeCallbackMessage(room.getName());
+				}
+			}
+			return;
+		}
+		if (C_Splitted[0].equalsIgnoreCase("!creator") && C_Splitted.length > 1) {
+			StickRoom room = Main.getLobbyServer().getRoomRegistry().GetRoomFromName(C_Splitted[1]);
+			if (room != null && (!room.getPrivacy()||client.getModStatus())) {
+				client.writeCallbackMessage("Creator of Room " + C_Splitted[1] + " is "
+						+ room.getCreatorName());
+			} else {
+				client.writeCallbackMessage("Room " + C_Splitted[1] + " not found");
+			}
+			return;
+		}
+		if (C_Splitted[0].equalsIgnoreCase("!listplayers") && C_Splitted.length > 1) {
+			StickRoom room = Main.getLobbyServer().getRoomRegistry().GetRoomFromName(C_Splitted[1]);
+			if (room != null && (!room.getPrivacy()||client.getModStatus())) {
+				client.writeCallbackMessage("Players in Room " + C_Splitted[1] + ":");
+				for (StickClient c : room.GetCR()
+						.getAllClients()) {
+					client.writeCallbackMessage(c.getName());
+				}
+			} else {
+				client.writeCallbackMessage("Room " + C_Splitted[1] + " not found");
+			}
+			return;
 		}
 	}
 
