@@ -1,5 +1,6 @@
 package ballistickemu;
  
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -7,6 +8,8 @@ import java.net.InetSocketAddress;
 import java.nio.charset.Charset;
 import java.util.Properties;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.core.LoggerContext;
 import org.apache.mina.core.session.IdleStatus;
 import org.apache.mina.filter.codec.ProtocolCodecFilter;
 import org.apache.mina.filter.codec.textline.TextLineCodecFactory;
@@ -36,6 +39,10 @@ public class Main {
      * @param args the command line arguments
      */
     public static void main(String[] args) { 
+    	LoggerContext context = (org.apache.logging.log4j.core.LoggerContext) LogManager.getContext(false);
+    	File file = new File("log4j2.xml");
+    	// this will force a reconfiguration
+    	context.setConfigLocation(file.toURI());
     	Properties ConfigProps = new Properties();
         try {
         ConfigProps.load(new FileInputStream("config.properties"));
@@ -60,7 +67,6 @@ public class Main {
         SocketAcceptor.getFilterChain().addLast( "codec", new ProtocolCodecFilter( new TextLineCodecFactory( Charset.forName( "UTF-8" ), "\0", "\0")));
         SocketAcceptor.getFilterChain().addLast("threadPool", executor);
         LS = new LobbyServer();
- 
        
  
         Main.IP = ConfigProps.getProperty("server_IP");
