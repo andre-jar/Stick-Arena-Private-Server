@@ -18,7 +18,7 @@ public class QuickplayTool {
     private static LinkedHashMap<Integer, String> FirstNames;
     private static LinkedHashMap<Integer, String> LastNames;
     
- public static Boolean PopulateNameList()
+ public static boolean PopulateNameList()
     {
      FirstNames = new LinkedHashMap<>();
      LastNames = new LinkedHashMap<>();

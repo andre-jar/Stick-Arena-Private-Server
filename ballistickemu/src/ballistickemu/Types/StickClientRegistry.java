@@ -143,7 +143,7 @@ public class StickClientRegistry {
 		return Clients.values();
 	}
 
-	public Boolean UIDExists(String UID) {
+	public boolean UIDExists(String UID) {
 		this.ClientsLock.readLock().lock();
 		try {
 			return Clients.containsKey(UID);

@@ -61,7 +61,7 @@ public class StickRoomRegistry {
 		futureMap.put(name, this.STP.scheduleAtFixedRate(r, 0L, 1L, TimeUnit.SECONDS));
 	}
 
-	public Boolean RoomExists(String Name) {
+	public boolean RoomExists(String Name) {
 		return GetRoomFromName(Name) == null;
 	}
 

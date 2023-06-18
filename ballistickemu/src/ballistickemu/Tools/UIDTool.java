@@ -28,7 +28,7 @@ public class UIDTool {
 
     public static String GenerateUID(StickClientRegistry LobbyRegistry)
     {
-        Boolean Complete;
+        boolean Complete;
         Complete = false;
         String GenUID = "";
         do
