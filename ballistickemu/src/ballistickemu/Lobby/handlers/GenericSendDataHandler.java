@@ -35,9 +35,8 @@ public class GenericSendDataHandler {
     {
         if (Packet.length() < 5) { return; }
         String ToUID = Packet.substring(2, 5);
-        if (Main.isChatLogEnabled()) 
-        {
-        	String ID = Packet.substring(5, 6);
+		if (Main.isChatLogEnabled() || !Main.getSpyList().isEmpty() && Packet.length() > 5) {
+			String ID = Packet.substring(5, 6);
 			if ("P".equals(ID)) {
 				String fromName = client.getName();
 				String toName = Main.getLobbyServer().getClientRegistry().getClientfromUID(ToUID).getName();
@@ -45,8 +44,12 @@ public class GenericSendDataHandler {
 				if (Main.isChatLogEnabled()) {
 					LOGGER.info(msg);
 				}
+				for (String spy : Main.getSpyList()) {
+					if (!spy.equals(fromName) && !spy.equals(toName))
+						Main.getLobbyServer().getClientRegistry().getClientfromName(spy).writeCallbackMessage(msg);
+				}
 			}
-        }
+		}
         Main.getLobbyServer().sendToUID(ToUID, StickPacketMaker.GenericSendPacket(client.getUID(), Packet.substring(5)));
 
     }

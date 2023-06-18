@@ -22,8 +22,10 @@ package ballistickemu.Lobby.handlers;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.StringJoiner;
+import java.util.concurrent.TimeUnit;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -228,6 +230,62 @@ public class ModCommandHandler {
 								client.getPass() ? 1 : 0, 1));
 				client.writeCallbackMessage("Unblended!");
 			}
+		} else if (ModCommandParsed[0].equalsIgnoreCase("::lastlogin")) {
+			if (ModCommandParsed.length == 2) {
+				try {
+					PreparedStatement ps = DatabaseTools.getDbConnection()
+							.prepareStatement("SELECT lastlogindate FROM `users` WHERE `playername` = ?");
+					ps.setString(1, ModCommandParsed[1]);
+					ResultSet rs = ps.executeQuery();
+					if (rs.next()) {
+						client.writeCallbackMessage("User " + ModCommandParsed[1] + " last logged in "
+								+ new SimpleDateFormat().format(rs.getBigDecimal(0)));
+					} else {
+						client.writeCallbackMessage("User " + ModCommandParsed[1] + " not found.");
+					}
+				} catch (SQLException e) {
+					LOGGER.warn("Failed to retrieve last login date of player " + ModCommandParsed[1]);
+				}
+			} else {
+				client.writeCallbackMessage("Usage: ::lastlogin username");
+			}
+		} else if (ModCommandParsed[0].equalsIgnoreCase("::banrecord")) {
+			if (ModCommandParsed.length == 2) {
+				try {
+					PreparedStatement ps = DatabaseTools.getDbConnection()
+							.prepareStatement("SELECT * FROM `bans` WHERE `playername` = ? ORDER BY id DESC");
+					ps.setString(1, ModCommandParsed[1]);
+					ResultSet rs = ps.executeQuery();
+					boolean hasBanrecords = false;
+					client.writeCallbackMessage("Banrecord for " + ModCommandParsed[1]);
+					while (rs.next()) {
+						hasBanrecords = true;
+						String record = new SimpleDateFormat().format(rs.getBigDecimal("issuedate")) + " banned by "
+								+ rs.getString("mod_responsible") + " for " + rs.getString("reason") + " for "
+								+ getDurationBreakdown(rs.getLong("enddate") - rs.getLong("issuedate"));
+						client.writeCallbackMessage(record);
+					}
+					if (!hasBanrecords)
+						client.writeCallbackMessage("User " + ModCommandParsed[1] + " has no ban record.");
+
+				} catch (SQLException e) {
+					LOGGER.warn("Failed to retrieve ban record for player " + ModCommandParsed[1]);
+				}
+			} else {
+				client.writeCallbackMessage("Usage: ::banrecord username");
+			}
+
+		} else if (ModCommandParsed[0].equalsIgnoreCase("::spy")) {
+			if (ModCommandParsed.length == 2) {
+				if (ModCommandParsed[1].equalsIgnoreCase("on")) {
+					Main.getSpyList().add(client.getName());
+					return;
+				} else if (ModCommandParsed[1].equalsIgnoreCase("off")) {
+					Main.getSpyList().remove(client.getName());
+					return;
+				}
+			}
+			client.writeCallbackMessage("Usage: ::spy on|off");
 		}
 
 		// ban, mute, deleteroom, disconnect, ipban, announce
@@ -337,6 +395,42 @@ public class ModCommandHandler {
 			count++;
 		} while (SC != null);
 		return (count > 0);
+	}
+
+	/**
+	 * Convert a millisecond duration to a string format
+	 * 
+	 * @param millis A duration to convert to a string form
+	 * @return A string of the form "X Days Y Hours Z Minutes".
+	 */
+	public static String getDurationBreakdown(long millis) {
+		if (millis < 0) {
+			throw new IllegalArgumentException("Duration must be greater than zero!");
+		}
+
+		long days = TimeUnit.MILLISECONDS.toDays(millis);
+		millis -= TimeUnit.DAYS.toMillis(days);
+		long hours = TimeUnit.MILLISECONDS.toHours(millis);
+		millis -= TimeUnit.HOURS.toMillis(hours);
+		long minutes = TimeUnit.MILLISECONDS.toMinutes(millis);
+		millis -= TimeUnit.MINUTES.toMillis(minutes);
+		if (millis > 500) {
+			minutes++;
+		}
+
+		StringBuilder sb = new StringBuilder();
+		if (days > 0) {
+			sb.append(days);
+			sb.append("d");
+		}
+		if (hours > 0) {
+			sb.append(hours);
+			sb.append("h");
+		}
+		sb.append(minutes);
+		sb.append("m");
+
+		return (sb.toString());
 	}
 
 }

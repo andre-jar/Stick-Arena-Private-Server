@@ -6,7 +6,9 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.charset.Charset;
+import java.util.HashSet;
 import java.util.Properties;
+import java.util.Set;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.core.LoggerContext;
@@ -34,6 +36,7 @@ public class Main {
     private static LobbyServer LS;
 	private static final Logger LOGGER = LoggerFactory.getLogger(Main.class);
 	private static boolean chatLogEnabled = false;	
+	private static Set<String> spyList;
  
     /**
      * @param args the command line arguments
@@ -43,6 +46,7 @@ public class Main {
     	File file = new File("log4j2.xml");
     	// this will force a reconfiguration
     	context.setConfigLocation(file.toURI());
+		spyList = new HashSet<>();
     	Properties ConfigProps = new Properties();
         try {
         ConfigProps.load(new FileInputStream("config.properties"));
@@ -112,5 +116,7 @@ public class Main {
     {
         return LS;
     }
- 
+	public static Set<String> getSpyList() {
+		return spyList;
+	}
 }
