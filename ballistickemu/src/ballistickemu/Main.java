@@ -8,6 +8,7 @@ import java.net.InetSocketAddress;
 import java.nio.charset.Charset;
 import java.util.HashSet;
 import java.util.Properties;
+import java.util.Scanner;
 import java.util.Set;
 
 import org.apache.logging.log4j.LogManager;
@@ -37,6 +38,7 @@ public class Main {
 	private static final Logger LOGGER = LoggerFactory.getLogger(Main.class);
 	private static boolean chatLogEnabled = false;	
 	private static Set<String> spyList;
+	private static boolean isPromptEnabled = false;
  
     /**
      * @param args the command line arguments
@@ -80,7 +82,30 @@ public class Main {
         DatabaseTools.pass = ConfigProps.getProperty("db_pass");
         DatabaseTools.server = ConfigProps.getProperty("db_server");
         DatabaseTools.database = ConfigProps.getProperty("db_database");
- 
+		String enablePrompt = ConfigProps.getProperty("enable_prompt");
+		if ("true".equalsIgnoreCase(enablePrompt)) {
+			isPromptEnabled = true;
+			Thread t = new Thread(new Runnable() {
+				Scanner scanner = new Scanner(System.in);
+
+				@Override
+				public void run() {
+					while (true) {
+						if (scanner.hasNext()) {
+							ConsoleCommandHandler.handle(scanner.nextLine());
+						}
+						try {
+							Thread.sleep(100);
+						} catch (InterruptedException e) {
+							e.printStackTrace();
+						}
+					}
+				}
+
+			});
+			t.start();
+		}
+        
         DatabaseTools.dbConnect();
  
         if (!LS.getShop().PopulateShop())
@@ -118,5 +143,8 @@ public class Main {
     }
 	public static Set<String> getSpyList() {
 		return spyList;
+	}
+	public static boolean isPromptEnabled() {
+		return isPromptEnabled;
 	}
 }

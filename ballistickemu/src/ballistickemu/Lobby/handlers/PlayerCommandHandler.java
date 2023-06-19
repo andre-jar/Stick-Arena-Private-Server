@@ -104,6 +104,11 @@ public class PlayerCommandHandler {
 			}
 			return;
 		}
+		if(C_Splitted[0].equalsIgnoreCase("!disconnect") && C_Splitted.length > 1 && client.getModStatus()) {
+			if (!ModCommandHandler.disconnectPlayer(C_Splitted[1])) {
+				client.writeMessage("User " + C_Splitted[1] + " was not found.");
+			}
+		}
 	}
 
 	private static String[] getArgs(String CommandStr, String command) { // !setcolor 255 255 255 255

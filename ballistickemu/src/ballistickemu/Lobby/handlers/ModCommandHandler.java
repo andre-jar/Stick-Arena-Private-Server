@@ -234,12 +234,12 @@ public class ModCommandHandler {
 			if (ModCommandParsed.length == 2) {
 				try {
 					PreparedStatement ps = DatabaseTools.getDbConnection()
-							.prepareStatement("SELECT lastlogindate FROM `users` WHERE `playername` = ?");
+							.prepareStatement("SELECT lastlogindate FROM `users` WHERE `username` = ?");
 					ps.setString(1, ModCommandParsed[1]);
 					ResultSet rs = ps.executeQuery();
 					if (rs.next()) {
 						client.writeCallbackMessage("User " + ModCommandParsed[1] + " last logged in "
-								+ new SimpleDateFormat().format(rs.getBigDecimal(0)));
+								+ new SimpleDateFormat().format(rs.getBigDecimal("lastlogindate")));
 					} else {
 						client.writeCallbackMessage("User " + ModCommandParsed[1] + " not found.");
 					}
@@ -383,7 +383,7 @@ public class ModCommandHandler {
 		return banResult;
 	}
 
-	private static Boolean disconnectPlayer(String playerName) // returns true if player found and dc'ed
+	public static Boolean disconnectPlayer(String playerName) // returns true if player found and dc'ed
 	{
 		StickClient SC = null;
 		int count = 0;
