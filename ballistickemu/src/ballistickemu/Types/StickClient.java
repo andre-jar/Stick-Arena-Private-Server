@@ -30,6 +30,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 import ballistickemu.Tools.DatabaseTools;
 import ballistickemu.Tools.QuickplayTool;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
 /**
@@ -331,6 +332,25 @@ public class StickClient {
 		return this.HasPass;
 	}
 
+	public boolean getPassDb() {
+		try {
+			PreparedStatement ps = DatabaseTools.getDbConnection()
+					.prepareStatement("SELECT labpass FROM `users` WHERE `UID` = ?");
+			ps.setInt(1, this.getDbID());
+			ResultSet rs = ps.executeQuery();
+			rs.next();
+			int pass = rs.getInt(1);
+			if (pass == 1) {
+				this.HasPass = true;
+			} else {
+				this.HasPass = false;
+			}
+		} catch (SQLException e) {
+			LOGGER.info("Error checking lab pass data: ", e);
+		}
+		return this.HasPass;
+	}
+	
 	public boolean getMuteStatus() {
 		return this.IsMuted;
 	}

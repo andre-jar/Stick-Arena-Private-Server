@@ -44,6 +44,7 @@ public class NewClientHandler {
 			}
 
 			if ((client.getRequiresUpdate())) {
+				client.getPassDb();
 				if (client.getRoom() != null) {
 					client.getRoom().GetCR().deregisterClient(client);
 					client.setRoom(null);
@@ -63,7 +64,7 @@ public class NewClientHandler {
 			} else { // this happens when someone's come back from the shop / profile page - update
 						// with any changes made there
 				int pass = 0;
-				if (client.getPass())
+				if (client.getPassDb())
 					pass = 1;
 				Main.getLobbyServer()
 						.BroadcastPacket(StickPacketMaker.getClientInfo(client.getUID(), client.getName(),
