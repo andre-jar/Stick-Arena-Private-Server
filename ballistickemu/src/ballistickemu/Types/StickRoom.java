@@ -293,7 +293,7 @@ public class StickRoom {
 
 			try {
 				for (StickClient c : CR.getAllClients()) {
-					System.out.println(c.getName() + " : " + c.getGameKills());
+					LOGGER.info(c.getName() + " : " + c.getGameKills());
 					if (mostKills == -1) {
 						tempWinner = c;
 						mostKills = c.getGameKills();
@@ -378,8 +378,7 @@ public class StickRoom {
 						LOGGER.info("Updated stats for user: " + c.getName());
 
 					} catch (Exception e) {
-						LOGGER.warn("There was an error updating round stats for user " + c.getName());
-						System.out.println(e);
+						LOGGER.warn("There was an error updating round stats for user {} {}", c.getName(), e);
 					}
 				}
 				updateJoinedClients();

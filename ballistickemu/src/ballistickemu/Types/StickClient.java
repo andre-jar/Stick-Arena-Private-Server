@@ -20,6 +20,9 @@
 package ballistickemu.Types;
 
 import org.apache.mina.core.session.IoSession;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import ballistickemu.Main;
 import ballistickemu.Tools.StickPacketMaker;
 import java.util.LinkedHashMap;
@@ -35,7 +38,8 @@ import java.sql.SQLException;
  */
 public class StickClient {
 	public static final String CLIENT_KEY = "CLIENT";
-
+	private static final Logger LOGGER = LoggerFactory.getLogger(StickClient.class);
+	
 	private IoSession session;
 	private String UID;
 	private int kills;
@@ -52,16 +56,16 @@ public class StickClient {
 	private int user_level;
 	private int dbID;
 	private String name;
-	private Boolean IsAtLobby;
-	private Boolean IsReal;
-	private Boolean HasPass;
+	private boolean IsAtLobby;
+	private boolean IsReal;
+	private boolean HasPass;
 	private StickColour colour;
 	private StickRoom Room;
-	private Boolean IsMod;
-	private Boolean IsMuted;
-	private Boolean IsBlended;
-	private Boolean IsQuickplayChar;
-	private Boolean IsRequiresUpdate;
+	private boolean IsMod;
+	private boolean IsMuted;
+	private boolean IsBlended;
+	private boolean IsQuickplayChar;
+	private boolean IsRequiresUpdate;
 	private LinkedHashMap<Integer, StickItem> Inventory;
 	public ReentrantReadWriteLock InventoryLock = new ReentrantReadWriteLock(true);
 
@@ -295,11 +299,11 @@ public class StickClient {
 	 *
 	 * @return
 	 */
-	public Boolean getLobbyStatus() {
+	public boolean getLobbyStatus() {
 		return this.IsAtLobby;
 	}
 
-	public Boolean getRequiresUpdate() {
+	public boolean getRequiresUpdate() {
 		return this.IsRequiresUpdate;
 	}
 
@@ -311,27 +315,27 @@ public class StickClient {
 		return this.session;
 	}
 
-	public Boolean getReal() {
+	public boolean getReal() {
 		return this.IsReal;
 	}
 
-	public Boolean getModStatus() {
+	public boolean getModStatus() {
 		return this.IsMod;
 	}
 
-	public Boolean isBlended() {
+	public boolean isBlended() {
 		return this.IsMod;
 	}
 
-	public Boolean getPass() {
+	public boolean getPass() {
 		return this.HasPass;
 	}
 
-	public Boolean getMuteStatus() {
+	public boolean getMuteStatus() {
 		return this.IsMuted;
 	}
 
-	public Boolean getQuickplayStatus() {
+	public boolean getQuickplayStatus() {
 		return this.IsQuickplayChar;
 	}
 
@@ -411,7 +415,7 @@ public class StickClient {
 	}
 
 	public void getCredsTicket(String Message) {
-		System.out.println(Message);
+		LOGGER.info(Message);
 		this.write(StickPacketMaker.getCredsTicket(Message));
 	}
 

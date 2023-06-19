@@ -26,11 +26,16 @@ import ballistickemu.Main;
 
 import java.util.ArrayList;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  *
  * @author Simon
  */
 public class StickPacketMaker {
+	private static final Logger LOGGER = LoggerFactory.getLogger(StickPacketMaker.class);
+	
 	public static StickPacket ServerHello() {
 		StickPacket Result = new StickPacket();
 		Result.Append("08\0");
@@ -63,9 +68,9 @@ public class StickPacketMaker {
 
 	public static void EchoPacket(byte[] bytes) {
 		for (int i = 0; i < bytes.length; i++) {
-			System.out.printf("{0:X} ", bytes[i]);
+			LOGGER.info("{0:X} ", bytes[i]);
 		}
-		System.out.println("\n");
+		LOGGER.info("\n");
 
 	}
 
