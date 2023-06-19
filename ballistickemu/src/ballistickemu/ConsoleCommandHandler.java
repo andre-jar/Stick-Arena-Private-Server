@@ -510,6 +510,7 @@ public class ConsoleCommandHandler {
 			LOGGER.info("labpass             Modifies labpass time of given player.");
 			LOGGER.info("credits             Modifies credits of given player.");
 			LOGGER.info("changename          Changes the player of given moderator.");
+			LOGGER.info("chatlog             Enables the logging of chat.");
 			return;
 		} else if (args[0].equalsIgnoreCase("labpass")) {
 			if (args.length != 4) {
@@ -668,6 +669,10 @@ public class ConsoleCommandHandler {
 			} catch (SQLException e) {
 				LOGGER.warn("There was an exception changing name: ", e);
 			}
+			return;
+		} else if(args[0].equalsIgnoreCase("chatlog")) {
+			LOGGER.info("Chat log setting changed.");
+			Main.setChatLogEnabled(!Main.isChatLogEnabled());
 			return;
 		} else {
 			LOGGER.info("Command not recognized. Type \"help\" for a list of commands.");

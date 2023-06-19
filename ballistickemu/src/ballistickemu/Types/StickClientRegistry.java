@@ -20,7 +20,9 @@
 package ballistickemu.Types;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.Set;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import org.slf4j.Logger;
@@ -35,10 +37,11 @@ import ballistickemu.Tools.StickPacketMaker;
  */
 public class StickClientRegistry {
 	private static final Logger LOGGER = LoggerFactory.getLogger(StickClientRegistry.class);
-	
+
 	private LinkedHashMap<String, StickClient> Clients;
 	private Boolean isLobby;
 	public ReentrantReadWriteLock ClientsLock = new ReentrantReadWriteLock(true);
+	private static Set<String> spyList = new HashSet<>();;
 
 	public StickClientRegistry(Boolean lobby) {
 
@@ -79,7 +82,7 @@ public class StickClientRegistry {
 							c.write(StickPacketMaker.getErrorPacket("2"));
 							room.GetCR().deregisterClient(c);
 							try {
-								Thread.sleep(100);   // Clients don't properly update without waiting somehow
+								Thread.sleep(100); // Clients don't properly update without waiting somehow
 							} catch (InterruptedException e) {
 								LOGGER.warn("Failed to wait to kick remaining players in a custom map room.");
 							}
@@ -91,7 +94,7 @@ public class StickClientRegistry {
 							c.write(StickPacketMaker.getErrorPacket("2"));
 							room.GetCR().deregisterClient(c);
 							try {
-								Thread.sleep(100);  // Clients don't properly update without waiting somehow
+								Thread.sleep(100); // Clients don't properly update without waiting somehow
 							} catch (InterruptedException e) {
 								LOGGER.warn("Failed to wait to kick remaining non-VIP players.");
 							}
@@ -168,6 +171,10 @@ public class StickClientRegistry {
 			this.ClientsLock.readLock().unlock();
 		}
 		return null;
+	}
+
+	public static Set<String> getSpyList() {
+		return spyList;
 	}
 
 }

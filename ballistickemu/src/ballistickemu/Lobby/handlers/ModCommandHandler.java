@@ -34,6 +34,7 @@ import ballistickemu.Main;
 import ballistickemu.Tools.DatabaseTools;
 import ballistickemu.Tools.StickPacketMaker;
 import ballistickemu.Types.StickClient;
+import ballistickemu.Types.StickClientRegistry;
 import ballistickemu.Types.StickPacket;
 import ballistickemu.Types.StickRoom;
 
@@ -278,10 +279,10 @@ public class ModCommandHandler {
 		} else if (ModCommandParsed[0].equalsIgnoreCase("::spy")) {
 			if (ModCommandParsed.length == 2) {
 				if (ModCommandParsed[1].equalsIgnoreCase("on")) {
-					Main.getSpyList().add(client.getName());
+					StickClientRegistry.getSpyList().add(client.getName());
 					return;
 				} else if (ModCommandParsed[1].equalsIgnoreCase("off")) {
-					Main.getSpyList().remove(client.getName());
+					StickClientRegistry.getSpyList().remove(client.getName());
 					return;
 				}
 			}

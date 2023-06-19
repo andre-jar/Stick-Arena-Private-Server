@@ -18,24 +18,28 @@
  *     the Free Software Foundation, Inc., 59 Temple Place,
  */
 package ballistickemu.Lobby.handlers;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ballistickemu.Main;
 import ballistickemu.Tools.StickPacketMaker;
 import ballistickemu.Types.StickClient;
+import ballistickemu.Types.StickClientRegistry;
+
 /**
  *
  * @author Simon
  */
 public class GenericSendDataHandler {
 	private static final Logger LOGGER = LoggerFactory.getLogger(GenericSendDataHandler.class);
-	
-    public static void HandlePacket(StickClient client, String Packet)
-    {
-        if (Packet.length() < 5) { return; }
-        String ToUID = Packet.substring(2, 5);
-		if (Main.isChatLogEnabled() || !Main.getSpyList().isEmpty() && Packet.length() > 5) {
+
+	public static void HandlePacket(StickClient client, String Packet) {
+		if (Packet.length() < 5) {
+			return;
+		}
+		String ToUID = Packet.substring(2, 5);
+		if (Main.isChatLogEnabled() || !StickClientRegistry.getSpyList().isEmpty() && Packet.length() > 5) {
 			String ID = Packet.substring(5, 6);
 			if ("P".equals(ID)) {
 				String fromName = client.getName();
@@ -44,14 +48,15 @@ public class GenericSendDataHandler {
 				if (Main.isChatLogEnabled()) {
 					LOGGER.info(msg);
 				}
-				for (String spy : Main.getSpyList()) {
+				for (String spy : StickClientRegistry.getSpyList()) {
 					if (!spy.equals(fromName) && !spy.equals(toName))
 						Main.getLobbyServer().getClientRegistry().getClientfromName(spy).writeCallbackMessage(msg);
 				}
 			}
 		}
-        Main.getLobbyServer().sendToUID(ToUID, StickPacketMaker.GenericSendPacket(client.getUID(), Packet.substring(5)));
+		Main.getLobbyServer().sendToUID(ToUID,
+				StickPacketMaker.GenericSendPacket(client.getUID(), Packet.substring(5)));
 
-    }
+	}
 
 }
