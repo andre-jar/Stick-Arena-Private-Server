@@ -42,6 +42,11 @@ Improved version of BallistickEMU. The original is probably entirely written by 
 - Fixed a bug where vips would not get added properly. Also only vips and labpass owners can now join labpass games. Also kicks vip players now if the game creator left. Also kicks players if it is a custom map and the creator left.
 - Labpass matches are no longer visible for normal players and also full rooms are also no longer visible. Also full games can't be joined any more now.
 - Restricted a few player commands. Normal players should not be allowed to cheat kills or change color any way they want (which would kill the purpose of shop and credits a bit). Also restricted some of the special spinners to labpass owners.
+- Changed ids of tables to start at lower numbers.
+- Changed all System.out calls to loggers. Additionally it is now possible to log the chat and also logs can be saved into a logfile.
+- Added a few additional commands (::spy to spy on private messages, ::banrecord to view a banrecord of a player, ::lastlogin to view the last login date of a player, !creator to see the creator of a game, !showgames to see active games and !listplayers to list players).
+- Added possibility to enable console commands. You can type "help" for a list of commands. 
+- Updates labpass expiry now when player returns to the lobby so you can't bypass the expiry date by staying logged in.
 
 # How to set up
 
