@@ -80,9 +80,9 @@ public class QuickplayTool {
         color[greater128] = getRandomNum(128,255);
         color[second] = getRandomNum(0,255);
         int sum = color[second]+color[greater128];
-        int par1 =  Math.max(0, sum-248);
-        int par2 = Math.min(255, 522-sum);
-        color[third] = getRandomNum(Math.min(par1,par2),Math.max(par1, par2));
+        int boundary1 =  Math.max(0, sum-248);
+        int boundary2 = Math.min(255, 522-sum);
+        color[third] = getRandomNum(Math.min(boundary1,boundary2),Math.max(boundary1, boundary2));
         
 		StickColour SpinnerCol = new StickColour(color[0], color[1], color[2],color[0], color[1], color[2]);
 
