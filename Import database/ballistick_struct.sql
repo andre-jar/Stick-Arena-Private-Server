@@ -153,6 +153,7 @@ CREATE TABLE `users` (
   `ip` text,
   `email_address` text,
   `creationdate` BIGINT(20) NOT NULL DEFAULT '0',
+  `verified` tinyint(1) NOT NULL DEFAULT '0',
   `lastlogindate` BIGINT(20) NOT NULL DEFAULT '0',
   UNIQUE KEY `USERname` (`USERname`(20)),
   KEY `UID` (`UID`)
@@ -197,6 +198,7 @@ CREATE TABLE `bans` (
 --
 
 LOCK TABLES `bans` WRITE;
+UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `maps`;
 CREATE TABLE `maps` (
@@ -212,6 +214,8 @@ CREATE TABLE `maps` (
 --
 -- Dumping data for table `maps`
 --
+LOCK TABLES `maps` WRITE;
+UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `pending_verifications`;
 CREATE TABLE `pending_verifications` (
@@ -229,9 +233,8 @@ CREATE TABLE `pending_verifications` (
 --
 
 LOCK TABLES `pending_verifications` WRITE;
-
-LOCK TABLES `maps` WRITE;
+UNLOCK TABLES;
 
 SET GLOBAL event_scheduler = ON;
-CREATE EVENT `labpass_remove` ON SCHEDULE EVERY 1 DAY STARTS '2023-06-03 17:55:00.868000' ON COMPLETION PRESERVE ENABLE DO UPDATE `users` SET labpass = 0 WHERE passexpiry = 0 
-CREATE EVENT `labpass_days` ON SCHEDULE EVERY 1 DAY STARTS '2023-06-03 18:00:00.868000' ON COMPLETION PRESERVE ENABLE DO UPDATE `users` SET passexpiry = passexpiry - 1 WHERE labpass = 1 
+CREATE EVENT `labpass_remove` ON SCHEDULE EVERY 1 DAY STARTS '2023-06-03 17:55:00.868000' ON COMPLETION PRESERVE ENABLE DO UPDATE `users` SET labpass = 0 WHERE passexpiry = 0;
+CREATE EVENT `labpass_days` ON SCHEDULE EVERY 1 DAY STARTS '2023-06-03 18:00:00.868000' ON COMPLETION PRESERVE ENABLE DO UPDATE `users` SET passexpiry = passexpiry - 1 WHERE labpass = 1;
