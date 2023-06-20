@@ -213,6 +213,23 @@ CREATE TABLE `maps` (
 -- Dumping data for table `maps`
 --
 
+DROP TABLE IF EXISTS `pending_verifications`;
+CREATE TABLE `pending_verifications` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `userid` int(10) unsigned NOT NULL,
+  `validationkey` text NOT NULL,
+  `expirydate` BIGINT(20) NOT NULL,
+  `verificationtype` tinyint(1) NOT NULL DEFAULT '0',
+   PRIMARY KEY (`id`)
+) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `pending_verifications``
+--
+
+LOCK TABLES `pending_verifications` WRITE;
+
 LOCK TABLES `maps` WRITE;
 
 SET GLOBAL event_scheduler = ON;
