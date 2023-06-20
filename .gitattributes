@@ -1,0 +1,5 @@
+htdocs/stickarena/*.php linguist-language=php
+htdocs/stickarena/ballistick/*.php linguist-language=php
+htdocs/stickarena/stickarena/*.php linguist-language=php
+htdocs/swf_filler_pages/*.php linguist-language=php
+htdocs/swf_filler_pages/ballistick/*.php linguist-language=php
