@@ -494,7 +494,7 @@ public class ConsoleCommandHandler {
 			LOGGER.info("global              Displays a global message popup.");
 			LOGGER.info("ip                  Displays the ip of given player.");
 			LOGGER.info("showgames           Shows the current games.");
-			LOGGER.info("killroom|deleteroom Closes the given games.");
+			LOGGER.info("killroom|deleteroom Closes the given game.");
 			LOGGER.info("listplayers         Lists the players.");
 			LOGGER.info("disconnect          Disconnects given player.");
 			LOGGER.info("creator             Shows the creator of the game.");
@@ -510,7 +510,7 @@ public class ConsoleCommandHandler {
 			LOGGER.info("labpass             Modifies labpass time of given player.");
 			LOGGER.info("credits             Modifies credits of given player.");
 			LOGGER.info("changename          Changes the player of given moderator.");
-			LOGGER.info("chatlog             Enables the logging of chat.");
+			LOGGER.info("chatlog             Enables/Disables the logging of chat.");
 			return;
 		} else if (args[0].equalsIgnoreCase("labpass")) {
 			if (args.length != 4) {
