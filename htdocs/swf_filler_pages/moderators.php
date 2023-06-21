@@ -4,6 +4,7 @@
 <head>
 	<title>StickEMU - Moderator</title>
 	<link rel="stylesheet" type="text/css" href="/styles/default.css" />
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />	
 </head>
 
 <body>

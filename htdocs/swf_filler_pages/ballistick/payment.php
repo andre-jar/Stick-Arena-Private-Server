@@ -7,6 +7,7 @@
 <head>
         <title>StickEMU - Stick Arena: Ballistick</title>
         <link rel="stylesheet" type="text/css" href="/styles/default.css" />
+	    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />	
         <style type="text/css">
 .ballistick
 {

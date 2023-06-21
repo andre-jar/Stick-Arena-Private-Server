@@ -8,6 +8,7 @@
   <meta name="keywords" content="Stick,Arena,MMO,MMORPG,Browser,Game">
   <title>BallistickEMU - Email Verficiations</title>
   <link rel="stylesheet" type="text/css" href="/styles/default.css">
+  <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />  
 </head>
 
 <?php
