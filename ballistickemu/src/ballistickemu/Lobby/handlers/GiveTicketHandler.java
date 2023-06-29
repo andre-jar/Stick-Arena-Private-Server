@@ -14,60 +14,31 @@ import ballistickemu.Types.StickClient;
  *
  * @author Michal
  */
-public class GiveTicketHandler {
+public class GiveTicketHandler {	
 	private static final Logger LOGGER = LoggerFactory.getLogger(GiveTicketHandler.class);
-	
+	private static final int[] prizes = new int[] { 20, 25, 30, 35, 40, 55, 60, 75, 100, 250, 500, 999, 1500, 5000 };
+	private static int randomNumber;
+
+	static {
+		randomNumber = prizes.length * (prizes.length + 1) / 2;
+	}
+
 	public static void HandlePacket(StickClient client) {
 		if (1 > client.getTicket()) // dont let anyone spam the cred ticket
 		{
-			LOGGER.warn(client.getName()
-					+ " attempted to collect cred ticket despite not having it available for them");
+			LOGGER.warn(
+					client.getName() + " attempted to collect cred ticket despite not having it available for them");
 		} else {
 			int prize = 0;
-
-			int random = new Random().nextInt(105);
-			if (random < 14) {
-				prize = 20;
-				client.getCredsTicket("0");
-			} else if (random < 27) {
-				prize = 25;
-				client.getCredsTicket("1");
-			} else if (random < 39) {
-				prize = 30;
-				client.getCredsTicket("2");
-			} else if (random < 50) {
-				prize = 35;
-				client.getCredsTicket("3");
-			} else if (random < 60) {
-				prize = 40;
-				client.getCredsTicket("4");
-			} else if (random < 69) {
-				prize = 55;
-				client.getCredsTicket("5");
-			} else if (random < 77) {
-				prize = 60;
-				client.getCredsTicket("6");
-			} else if (random < 84) {
-				prize = 75;
-				client.getCredsTicket("7");
-			} else if (random < 90) {
-				prize = 100;
-				client.getCredsTicket("8");
-			} else if (random < 95) {
-				prize = 250;
-				client.getCredsTicket("9");
-			} else if (random < 99) {
-				prize = 500;
-				client.getCredsTicket("10");
-			} else if (random < 102) {
-				prize = 999;
-				client.getCredsTicket("11");
-			} else if (random < 104) {
-				prize = 1500;
-				client.getCredsTicket("12");
-			} else if (random < 105) {
-				prize = 5000;
-				client.getCredsTicket("13");
+			int number = 0;
+			int random = new Random().nextInt(randomNumber);
+			for (int index = 0; index < prizes.length; index++) {
+				number += (prizes.length - index);
+				if (random < number) {
+					prize = prizes[index];
+					client.getCredsTicket(String.valueOf(index));
+					break;
+				}
 			}
 
 			try {
