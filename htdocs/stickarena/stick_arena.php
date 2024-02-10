@@ -101,9 +101,9 @@ if($action=="create")
 	       $message = 'result=email_duplicate';
 		   die($message);
 	   }	
-	   $result = mysqli_execute_query($db, "INSERT INTO `users` (USERname, USERpass, red, green, blue, cash, email_address, creationdate) VALUES(?,?,?,?,?,?,?,?)", [$username, $userpass, $colour[0], $colour[1], $colour[2], 0, $email_address, $milliseconds]);
+	   $result = mysqli_execute_query($db, "INSERT INTO `users` (USERname, USERpass, red, green, blue, cash, email_address, creationdate) VALUES(?,?,?,?,?,?,?,?)", [$username, $password, $colour[0], $colour[1], $colour[2], 0, $email_address, $milliseconds]);
 	} else {
-	   $result = mysqli_execute_query($db, "INSERT INTO `users` (USERname, USERpass, red, green, blue, creationdate) VALUES(?,?,?,?,?,?)", [$username, $userpass, $colour[0], $colour[1], $colour[2], $milliseconds]);
+	   $result = mysqli_execute_query($db, "INSERT INTO `users` (USERname, USERpass, red, green, blue, creationdate) VALUES(?,?,?,?,?,?)", [$username, $password, $colour[0], $colour[1], $colour[2], $milliseconds]);
 	}
 	if (!$result) {
 		$message  = 'result=error';
@@ -113,7 +113,8 @@ if($action=="create")
 	$data = mysqli_execute_query($db, "SELECT UID FROM `users` WHERE USERname = ? LIMIT 1", [$username]);
 	$id = mysqli_fetch_array($data);
     $result2 = mysqli_execute_query($db, "INSERT INTO `inventory` (id,userid, itemid, itemtype, red1, green1, blue1, red2, blue2, green2, selected) VALUES(DEFAULT,?,100,1,?,?,?,?,?,?,1)", [$id['UID'], $colour[0], $colour[1], $colour[2],$colour[0], $colour[1], $colour[2]]);	
-	if (!$result2) {
+	$result3 = mysqli_execute_query($db, "INSERT INTO `inventory` (id,userid, itemid, itemtype, red1, green1, blue1, red2, blue2, green2, selected) VALUES(DEFAULT,?,200,2,?,?,?,?,?,?,1)", [$id['UID'], $colour[0], $colour[1], $colour[2],$colour[0], $colour[1], $colour[2]]);
+	if (!$result2 || !$result3) {
 		$message  = 'result=error';
 		die($message);
 	}
