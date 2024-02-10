@@ -21,7 +21,7 @@ Improved version of BallistickEMU. The original is probably entirely written by 
 - Buying and cheating items will now correctly set the items in the client without overwriting previous items.
 - Added logic to kick players in matches. Players can't join after they got kicked until a new round starts. Mods can kick without having votes.
 - Added version checking to php script. Accepts 558, 588 and 598 (Dimensions) clients per default. Could be used to restrict Dimensions clients from joining (due to their better viewrange) if you want to allow older clients.
-- Rooms will now properly get deregisted and also threads that will no longer be in use get removed so the garbage collection can do its thing. Also removed the deprecated finalizers. It has never been a good idea to rely on them(although they didn't do much here).
+- Rooms will now properly get deregistered and also threads that will no longer be in use get removed so the garbage collection can do its thing. Also removed the deprecated finalizers. It has never been a good idea to rely on them(although they didn't do much here).
 - setKills now correctly updates kills and relogging is no longer required.
 - setColor also does not require relogging anymore.
 - Changed the ban system. It is now possible to ban players a specific amount of time and ip banning also can be time limited (or infinite) from now on. Bans get stored with a timestamp that gets checked at login if the player is still banned.
@@ -50,6 +50,8 @@ Improved version of BallistickEMU. The original is probably entirely written by 
 - Added a few filler php sites to fill the missing links in the swf files.
 - Added the possibility to verify emails and recover accounts with the provided php scripts.
 - Added a few example sqls to create example users.
+- Fixed a bug where you could not select an empty pet.
+- Users do not have a labpass as default now.
 
 # How to set up
 
