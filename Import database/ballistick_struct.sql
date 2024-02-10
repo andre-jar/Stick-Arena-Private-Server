@@ -138,7 +138,7 @@ CREATE TABLE `users` (
   `user_level` tinyint(1) NOT NULL DEFAULT '0',
   `passexpiry` int(11) NOT NULL DEFAULT '2955',
   `cash` int(11) NOT NULL DEFAULT '100000',
-  `labpass`tinyint(1) NOT NULL DEFAULT '1',
+  `labpass`tinyint(1) NOT NULL DEFAULT '0',
   `rounds` int(11) NOT NULL DEFAULT '0',
   `kills` int(11) NOT NULL DEFAULT '0',
   `deaths` int(11) NOT NULL DEFAULT '0',
