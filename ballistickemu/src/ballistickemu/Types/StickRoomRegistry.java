@@ -62,7 +62,7 @@ public class StickRoomRegistry {
 	}
 
 	public boolean RoomExists(String Name) {
-		return GetRoomFromName(Name) == null;
+		return !(GetRoomFromName(Name) == null);
 	}
 
 	public StickRoom GetRoomFromName(String Name) {

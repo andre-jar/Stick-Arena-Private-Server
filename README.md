@@ -52,6 +52,7 @@ Improved version of BallistickEMU. The original is probably entirely written by 
 - Added a few example sqls to create example users.
 - Fixed a bug where you could not select an empty pet.
 - Users do not have a labpass as default now.
+- Prevent players from creating a room with the same name twice
 
 # How to set up
 

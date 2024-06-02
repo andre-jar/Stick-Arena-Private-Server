@@ -57,6 +57,14 @@ public class CreateRoomHandler {
 			Boolean requiresLabPass = (RoomData.substring(5, 6).equalsIgnoreCase("1"));
 			String RoomName = RoomData.substring(6).replace("\0", "");
 
+			if(Main.getLobbyServer().getRoomRegistry().RoomExists(RoomName)) {
+				// FIXME there is no way to stop the player from creating two rooms with the same name
+				// kick him out until a better solution can be found
+				client.write(StickPacketMaker.getErrorPacket("42"));
+				LOGGER.warn("Player " +client.getName() +" tried to create existing game");
+				return;
+			}
+			
 			LinkedHashMap<String, StickClient> VIPMap = new LinkedHashMap<String, StickClient>();
 
 			if ((IsLabPass) && (VIPList.length > 0)) {
