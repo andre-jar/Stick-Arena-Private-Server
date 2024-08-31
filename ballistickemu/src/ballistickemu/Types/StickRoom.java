@@ -23,9 +23,11 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Set;
+import java.util.Map.Entry;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import org.slf4j.Logger;
@@ -191,16 +193,15 @@ public class StickRoom {
 
 	public void killRoom() {
 		this.CR.ClientsLock.writeLock().lock();
-		try {
-			for (StickClient SC : this.CR.getAllClients()) {
-				SC.write(StickPacketMaker.getErrorPacket("5"));
-				CR.deregisterClient(SC);
-			}
-			Main.getLobbyServer().getRoomRegistry()
-					.deRegisterRoom(Main.getLobbyServer().getRoomRegistry().GetRoomFromName(Name));
-		} finally {
-			this.CR.ClientsLock.writeLock().unlock();
+		Iterator<Entry<String, StickClient>> iter = this.GetCR().getClientEntries().iterator();
+		while (iter.hasNext()) {
+			Entry<String, StickClient> entry = iter.next();
+			StickClient c = entry.getValue();
+			c.write(StickPacketMaker.getErrorPacket("5"));
+			this.GetCR().deregisterClientWithIterator(iter, c);
+			c.setRoom(null);
 		}
+
 	}
 
 	public LinkedHashMap<String, StickClient> getVIPs() {
@@ -254,17 +255,13 @@ public class StickRoom {
 				Thread.currentThread().interrupt();
 				return;
 			}
-			
-
-				RoundTime = (RoundTime - 1);
-
+			RoundTime = (RoundTime - 1);
 			if (RoundTime == -1) {
 				updateStats(getWinner());
 			} 
 			if(RoundTime <=-30) {
 				RoundTime = 300;
 			}
-
 		}
 
 		private void updateJoinedClients() {

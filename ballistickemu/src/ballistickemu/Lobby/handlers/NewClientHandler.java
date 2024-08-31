@@ -50,7 +50,6 @@ public class NewClientHandler {
 					client.setRoom(null);
 					client.setLobbyStatus(true);
 				}
-
 				Main.getLobbyServer().BroadcastPacket(StickPacketMaker.getNewPlayerUID(client.getUID()));
 				client.write(StickPacketMaker.getUserList(Main.getLobbyServer().getClientRegistry(), client.getUID(),
 						true, client));
@@ -59,7 +58,6 @@ public class NewClientHandler {
 								client.getSelectedSpinner().getColour().getColour1AsString(), client.getKills(),
 								client.getDeaths(), client.getWins(), client.getLosses(), client.getRounds(),
 								client.getPass() ? 1 : 0, client.getUserLevel()), true, client.getUID());
-
 				client.setRequiresUpdate(false);
 			} else { // this happens when someone's come back from the shop / profile page - update
 						// with any changes made there

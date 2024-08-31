@@ -21,7 +21,9 @@ package ballistickemu.Types;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
@@ -62,6 +64,31 @@ public class StickClientRegistry {
 		}
 	}
 
+	public void deregisterClientWithIterator(Iterator<Entry<String, StickClient>> iter, StickClient client)
+	{
+		if (client.getLobbyStatus() && this.isLobby) {
+			// only allow access if another thread isn't reading the resource
+			this.ClientsLock.writeLock().lock();
+			try {
+				iter.remove();
+			} finally {
+				this.ClientsLock.writeLock().unlock();
+			}
+			LOGGER.info("User " + client.getName() + " being deregistered from main registry.");
+			Main.getLobbyServer().BroadcastPacket(StickPacketMaker.Disconnected(client.getUID()));
+		} else if (client.getRoom() != null) {
+			StickRoom room = client.getRoom();
+			room.GetCR().ClientsLock.writeLock().lock();
+		try {
+			iter.remove();
+		} finally {
+			room.GetCR().ClientsLock.writeLock().unlock();
+		}
+		client.setLobbyStatus(true);
+		room.BroadcastToRoom(StickPacketMaker.Disconnected(client.getUID()));
+		}
+	}
+	
 	public void deregisterClient(StickClient client) {
 		if (client.getLobbyStatus() && this.isLobby) {
 			// only allow access if another thread isn't reading the resource
@@ -77,27 +104,26 @@ public class StickClientRegistry {
 			StickRoom room = client.getRoom();
 			if (room.getCreatorName().equals(client.getName())) {
 				if (room.usesCustomMap()) {
-					for (StickClient c : room.GetCR().Clients.values()) {
+					Iterator<Entry<String, StickClient>> iter = room.GetCR().getClientEntries().iterator();
+					while (iter.hasNext()) {
+						Entry<String, StickClient> entry = iter.next();
+						StickClient c = entry.getValue();
 						if (!c.getName().equals(client.getName())) {
 							c.write(StickPacketMaker.getErrorPacket("2"));
-							room.GetCR().deregisterClient(c);
-							try {
-								Thread.sleep(100); // Clients don't properly update without waiting somehow
-							} catch (InterruptedException e) {
-								LOGGER.warn("Failed to wait to kick remaining players in a custom map room.");
-							}
+							deregisterClientWithIterator(iter, c);
+							c.setRoom(null);
 						}
 					}
 				} else if (room.getNeedsPass()) {
-					for (StickClient c : room.GetCR().Clients.values()) {
+					room.getVIPs().clear();
+					Iterator<Entry<String, StickClient>> iter = room.GetCR().getClientEntries().iterator();
+					while(iter.hasNext()) {
+						Entry<String, StickClient> entry = iter.next();
+						StickClient c = entry.getValue();
 						if (!c.getPass()) {
 							c.write(StickPacketMaker.getErrorPacket("2"));
-							room.GetCR().deregisterClient(c);
-							try {
-								Thread.sleep(100); // Clients don't properly update without waiting somehow
-							} catch (InterruptedException e) {
-								LOGGER.warn("Failed to wait to kick remaining non-VIP players.");
-							}
+							deregisterClientWithIterator(iter, c);
+							c.setRoom(null);
 						}
 					}
 				}
@@ -144,6 +170,10 @@ public class StickClientRegistry {
 
 	public Collection<StickClient> getAllClients() {
 		return Clients.values();
+	}
+	
+	public Set<Entry<String, StickClient>> getClientEntries() {
+		return Clients.entrySet();
 	}
 
 	public boolean UIDExists(String UID) {
