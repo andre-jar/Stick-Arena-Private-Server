@@ -254,14 +254,15 @@ public class StickRoom {
 				Thread.currentThread().interrupt();
 				return;
 			}
+			
 
-			if (RoundTime > 0)
 				RoundTime = (RoundTime - 1);
-			else
-				RoundTime = 270;
-			if (RoundTime == 1) {
-				RoundTime = 300;
+
+			if (RoundTime == -1) {
 				updateStats(getWinner());
+			} 
+			if(RoundTime <=-30) {
+				RoundTime = 300;
 			}
 
 		}
