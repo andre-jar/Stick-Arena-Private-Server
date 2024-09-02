@@ -53,6 +53,8 @@ Improved version of BallistickEMU. The original is probably entirely written by 
 - Fixed a bug where you could not select an empty pet.
 - Users do not have a labpass as default now.
 - Prevent players from creating a room with the same name twice
+- Fixed a bug where the lobby time after completion of the round was displayed incorrectly by the clients and
+  joining in between matches would lead the player to an empty room until a new round starts.
 
 # How to set up
 
