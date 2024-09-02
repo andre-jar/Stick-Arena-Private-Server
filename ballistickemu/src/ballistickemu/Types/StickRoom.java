@@ -23,11 +23,9 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Set;
-import java.util.Map.Entry;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import org.slf4j.Logger;
@@ -193,15 +191,24 @@ public class StickRoom {
 
 	public void killRoom() {
 		this.CR.ClientsLock.writeLock().lock();
-		Iterator<Entry<String, StickClient>> iter = this.GetCR().getClientEntries().iterator();
-		while (iter.hasNext()) {
-			Entry<String, StickClient> entry = iter.next();
-			StickClient c = entry.getValue();
-			c.write(StickPacketMaker.getErrorPacket("5"));
-			this.GetCR().deregisterClientWithIterator(iter, c);
-			c.setRoom(null);
+		ArrayList<StickClient> ToDC = new ArrayList<>();
+		for(StickClient c:this.CR.getAllClients()) {
+			if (!c.getLobbyStatus()) {
+				ToDC.add(c);
+			}
 		}
-
+		this.CR.ClientsLock.writeLock().unlock();
+		for (StickClient c : ToDC) {
+			this.CR.deregisterClient(c);
+			try {
+				Thread.sleep(500);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			c.write(StickPacketMaker.getErrorPacket("5"));
+		}
+		ToDC.removeAll(ToDC);
 	}
 
 	public LinkedHashMap<String, StickClient> getVIPs() {

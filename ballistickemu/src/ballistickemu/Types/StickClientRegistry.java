@@ -19,11 +19,10 @@
  */
 package ballistickemu.Types;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
-import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
@@ -63,31 +62,6 @@ public class StickClientRegistry {
 			this.ClientsLock.writeLock().unlock();
 		}
 	}
-
-	public void deregisterClientWithIterator(Iterator<Entry<String, StickClient>> iter, StickClient client)
-	{
-		if (client.getLobbyStatus() && this.isLobby) {
-			// only allow access if another thread isn't reading the resource
-			this.ClientsLock.writeLock().lock();
-			try {
-				iter.remove();
-			} finally {
-				this.ClientsLock.writeLock().unlock();
-			}
-			LOGGER.info("User " + client.getName() + " being deregistered from main registry.");
-			Main.getLobbyServer().BroadcastPacket(StickPacketMaker.Disconnected(client.getUID()));
-		} else if (client.getRoom() != null) {
-			StickRoom room = client.getRoom();
-			room.GetCR().ClientsLock.writeLock().lock();
-		try {
-			iter.remove();
-		} finally {
-			room.GetCR().ClientsLock.writeLock().unlock();
-		}
-		client.setLobbyStatus(true);
-		room.BroadcastToRoom(StickPacketMaker.Disconnected(client.getUID()));
-		}
-	}
 	
 	public void deregisterClient(StickClient client) {
 		if (client.getLobbyStatus() && this.isLobby) {
@@ -104,28 +78,34 @@ public class StickClientRegistry {
 			StickRoom room = client.getRoom();
 			if (room.getCreatorName().equals(client.getName())) {
 				if (room.usesCustomMap()) {
-					Iterator<Entry<String, StickClient>> iter = room.GetCR().getClientEntries().iterator();
-					while (iter.hasNext()) {
-						Entry<String, StickClient> entry = iter.next();
-						StickClient c = entry.getValue();
-						if (!c.getName().equals(client.getName())) {
-							c.write(StickPacketMaker.getErrorPacket("2"));
-							deregisterClientWithIterator(iter, c);
-							c.setRoom(null);
+					this.ClientsLock.writeLock().lock();
+					ArrayList<StickClient> ToDC = new ArrayList<>();
+					for(StickClient c:this.getAllClients()) {
+						if (!c.getLobbyStatus()) {
+							ToDC.add(c);
 						}
 					}
+					this.ClientsLock.writeLock().unlock();
+					for (StickClient c : ToDC) {
+						this.deregisterClient(c);
+						c.write(StickPacketMaker.getErrorPacket("2"));
+					}
+					ToDC.removeAll(ToDC);
 				} else if (room.getNeedsPass()) {
 					room.getVIPs().clear();
-					Iterator<Entry<String, StickClient>> iter = room.GetCR().getClientEntries().iterator();
-					while(iter.hasNext()) {
-						Entry<String, StickClient> entry = iter.next();
-						StickClient c = entry.getValue();
-						if (!c.getPass()) {
-							c.write(StickPacketMaker.getErrorPacket("2"));
-							deregisterClientWithIterator(iter, c);
-							c.setRoom(null);
+					this.ClientsLock.writeLock().lock();
+					ArrayList<StickClient> ToDC = new ArrayList<>();
+					for(StickClient c:this.getAllClients()) {
+						if (!c.getPass() && !c.getLobbyStatus()) {
+							ToDC.add(c);
 						}
 					}
+					this.ClientsLock.writeLock().unlock();
+					for (StickClient c : ToDC) {
+						this.deregisterClient(c);
+						c.write(StickPacketMaker.getErrorPacket("2"));
+					}
+					ToDC.removeAll(ToDC);
 				}
 
 			}
@@ -170,10 +150,6 @@ public class StickClientRegistry {
 
 	public Collection<StickClient> getAllClients() {
 		return Clients.values();
-	}
-	
-	public Set<Entry<String, StickClient>> getClientEntries() {
-		return Clients.entrySet();
 	}
 
 	public boolean UIDExists(String UID) {
