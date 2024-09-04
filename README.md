@@ -55,7 +55,8 @@ Improved version of BallistickEMU. The original is probably entirely written by 
 - Prevent players from creating a room with the same name twice
 - Fixed a bug where the lobby time after completion of the round was displayed incorrectly by the clients and
   joining in between matches would lead the player to an empty room until a new round starts.
-
+- Fixed a bug where the lobby does not get updated properly for clients in the lobby after joining for the first time. 
+  
 # How to set up
 
 - Requirements: Java JDK, Maven, Flash Decompiler(JPEXS is the best I tested so far and I tested a lot), webserver with PHP installed, MySQL database (You can use xampp for webserver and database as a quick start), Flash player(Discontinued but there are versions floating around in the internet) 

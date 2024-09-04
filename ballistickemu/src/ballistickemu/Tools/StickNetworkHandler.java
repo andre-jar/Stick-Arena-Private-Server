@@ -66,9 +66,15 @@ public class StickNetworkHandler extends IoHandlerAdapter {
 		String S = message.toString().trim();
 
 		StickClient c_Client = (StickClient) session.getAttribute(StickClient.CLIENT_KEY);
-		if (c_Client == null)
+		if (c_Client == null) {
 			return;
+		}
 		if (S.equalsIgnoreCase("<policy-file-request/>")) {
+			// Clients open 2 connections: 
+			// 1 for the policy file and after receiving it another connection for the game itself
+			// this means we have to block the disconnect package after the first connection gets closed
+			// Only the first connection requests the policy file
+			c_Client.setReceivingPolicy(true);
 			c_Client.writePolicyFile();
 			return;
 		}

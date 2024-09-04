@@ -68,6 +68,7 @@ public class StickClient {
 	private boolean IsQuickplayChar;
 	private boolean IsRequiresUpdate;
 	private LinkedHashMap<Integer, StickItem> Inventory;
+	private boolean receivingPolicy=false;
 	public ReentrantReadWriteLock InventoryLock = new ReentrantReadWriteLock(true);
 
 	/**
@@ -408,6 +409,15 @@ public class StickClient {
 	public LinkedHashMap<Integer, StickItem> getInventory() {
 		return this.Inventory;
 	}
+	
+	public void setReceivingPolicy(boolean receivingPolicy) {
+		this.receivingPolicy=receivingPolicy;
+	}
+	
+	public boolean isReceivingPolicy()
+	{
+		return receivingPolicy;
+	}
 
 	public void write(StickPacket Packet) {
 		if (Packet.getString().length() < 1)
@@ -606,5 +616,4 @@ public class StickClient {
 		this.name = QuickplayTool.getRandomName();
 		this.Inventory = QuickplayTool.getRandomInventory();
 	}
-
 }

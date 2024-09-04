@@ -200,12 +200,6 @@ public class StickRoom {
 		this.CR.ClientsLock.writeLock().unlock();
 		for (StickClient c : ToDC) {
 			this.CR.deregisterClient(c);
-			try {
-				Thread.sleep(500);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
 			c.write(StickPacketMaker.getErrorPacket("5"));
 		}
 		ToDC.removeAll(ToDC);
