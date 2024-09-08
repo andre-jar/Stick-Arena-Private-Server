@@ -35,7 +35,7 @@ import ballistickemu.Types.StickRoom;
 public class NewClientHandler {
 	private static final Logger LOGGER = LoggerFactory.getLogger(NewClientHandler.class);
 
-	public static void HandlePacket(StickClient client, String Packet) {
+	public static synchronized void HandlePacket(StickClient client, String Packet) {
 		if (Packet.substring(0, 3).equalsIgnoreCase("03_")) {
 			client.setReceivingPolicy(false);
 			if ((client.getQuickplayStatus()) || (client.getName() == null)) // no QP chars in lobby thanks

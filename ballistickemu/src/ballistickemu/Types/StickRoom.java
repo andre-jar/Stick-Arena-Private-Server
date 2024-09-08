@@ -59,6 +59,7 @@ public class StickRoom {
 	private StickClient lastKickTarget;
 	Set<StickClient> kickVoters;
 	Set<String> totalJoinedClients;
+	private boolean roomMarkedForKill;
 
 	public StickRoom() {
 		this.CR = new StickClientRegistry(false);
@@ -82,6 +83,7 @@ public class StickRoom {
 		blacklist = new ArrayList<>();
 		kickVoters = new HashSet<>();
 		totalJoinedClients = new HashSet<>();
+		this.roomMarkedForKill = false;
 	}
 
 	public void BroadcastToRoom(StickPacket packet) {
@@ -90,8 +92,9 @@ public class StickRoom {
 		try {
 			for (StickClient c : this.CR.getAllClients()) {
 				try {
-					if (!c.getLobbyStatus())
+					if (!c.getLobbyStatus()) {
 						c.write(packet);
+					}
 				} catch (Exception e) {
 					ToDC.add(c);
 				}
@@ -191,18 +194,15 @@ public class StickRoom {
 
 	public void killRoom() {
 		this.CR.ClientsLock.writeLock().lock();
-		ArrayList<StickClient> ToDC = new ArrayList<>();
+		this.roomMarkedForKill = true;
 		for(StickClient c:this.CR.getAllClients()) {
 			if (!c.getLobbyStatus()) {
-				ToDC.add(c);
+				c.setRequiresUpdate(true);
+				c.write(StickPacketMaker.getErrorPacket("5"));
+				break;
 			}
 		}
 		this.CR.ClientsLock.writeLock().unlock();
-		for (StickClient c : ToDC) {
-			this.CR.deregisterClient(c);
-			c.write(StickPacketMaker.getErrorPacket("5"));
-		}
-		ToDC.removeAll(ToDC);
 	}
 
 	public LinkedHashMap<String, StickClient> getVIPs() {
@@ -398,6 +398,11 @@ public class StickRoom {
 		}
 	}
 
+	public boolean isMarkedForKill()
+	{
+		return roomMarkedForKill;
+	}
+	
 	public boolean isFull(StickClient client) {
 		int numPlayers = this.CR.getAllClients().size();
 		if (client.getPass() || getNeedsPass()) {
