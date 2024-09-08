@@ -84,7 +84,7 @@ public class StickClientRegistry {
 					this.ClientsLock.writeLock().lock();
 					ArrayList<StickClient> ToDC = new ArrayList<>();
 					for(StickClient c:this.getAllClients()) {
-						if (!c.getLobbyStatus()) {
+						if (!c.getLobbyStatus() && !room.getCreatorName().equals(c.getName())) {
 							ToDC.add(c);
 						}
 					}
